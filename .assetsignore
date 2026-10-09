@@ -1,0 +1,13 @@
+# Files that should NOT be uploaded/served as site assets.
+# (Wrangler installs node_modules during the build; that folder holds a
+#  129 MiB workerd binary that exceeds Cloudflare's 25 MiB per-asset limit.)
+node_modules
+.git
+.gitignore
+.assetsignore
+wrangler.jsonc
+wrangler.toml
+package.json
+package-lock.json
+bun.lockb
+README.md
