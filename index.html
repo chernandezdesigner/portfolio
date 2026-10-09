@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1200">
+  <title>Christian Hernandez — Designer &amp; Full-Stack Engineer</title>
+  <meta name="description" content="Christian Hernandez — designer and full-stack engineer building internal tools that drive results.">
+  <link rel="icon" type="image/svg+xml" href="./assets/images/favicon.svg">
+  <link rel="stylesheet" href="./assets/css/site.css">
+
+  <!-- Shaders library resolved from a CDN (no build step in this project) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "shaders/js": "https://esm.sh/shaders/js"
+    }
+  }
+  </script>
+
+  <style>
+    /* ─── Home hero ──────────────────────────────────────────── */
+    /* The hero now carries the work too: copy sits up top, the cards
+       sit directly on the shader so work is visible without scrolling. */
+    .home-hero {
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      /* clear the overlaid nav (72px) + breathing room */
+      padding: 128px 0 var(--s-16);
+    }
+
+    .home-hero .cs-inner { position: relative; z-index: 2; width: 100%; }
+
+    /* Headline block, centered above the work */
+    .home-hero-copy {
+      max-width: 1200px;
+      margin: 0 auto var(--s-12);
+    }
+
+    /* Shader background (installed from Shaders "Untitled") */
+    .home-hero-shader {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      display: block;
+    }
+
+    /* Palette-tinted scrim: guarantees WCAG AAA for the light text above,
+       since the animated gradient ranges from light pink to dark plum.
+       Behind-text luminance stays low enough for >= 7:1 against #fff. */
+    .home-hero-scrim {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(120% 90% at 50% 50%, rgba(28, 20, 34, 0.58) 0%, rgba(28, 20, 34, 0.72) 55%, rgba(28, 20, 34, 0.80) 100%);
+    }
+
+    .home-hero-eyebrow {
+      font-family: "Inter", "Inter Placeholder", sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      /* light lavender — ~9:1 on the scrim (AAA for normal text) */
+      color: #ece7ff;
+    }
+
+    .home-hero-title {
+      font-size: 62px;
+      font-weight: 500;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      /* white — ~10:1 on the scrim (AAA) */
+      color: #ffffff;
+      max-width: none;
+      margin: 0 auto;
+      margin-bottom: var(--s-8);
+      margin-top: var(--s-16);
+    }
+
+    /* ─── Selected work — bento (dark, sits on the shader) ──────── */
+    /* Left-aligned editorial block, framed cards floating on the
+       gradient. Adapted from the "Bento" reference for dark mode. */
+    .work { text-align: left; margin-top: var(--s-40); }
+
+    .work-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: var(--s-4);
+      margin-bottom: var(--s-8);
+    }
+
+    .work-head-copy { display: flex; flex-direction: column; gap: var(--s-2); }
+
+    .work-head-kicker {
+      font-family: "Inter", "Inter Placeholder", sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #ece7ff;                      /* ~11:1 on the scrim — AAA */
+    }
+
+    .work-head-title {
+      margin: 0;
+      font-size: 44px;
+      line-height: 1.1;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+
+    .work-head-meta {
+      font-family: "Inter", "Inter Placeholder", sans-serif;
+      font-size: 15px;
+      color: #ece7ff;
+    }
+
+    /* Bento row: big card + stacked right column */
+    .bento {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s-6);
+      align-items: stretch;
+    }
+
+    .bento-col {
+      flex: 5 1 380px;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-6);
+    }
+
+    /* Card frame — dark surface with a hairline that reads on gradient */
+    .bento-card {
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+      background: #15151a;
+      border: 1px solid var(--line-dark);
+      border-radius: 24px;
+      padding: var(--s-4);
+      box-sizing: border-box;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .bento-card--lg { flex: 7 1 560px; min-width: 0; }
+
+    a.bento-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.28);
+      box-shadow: 0 24px 48px -20px rgba(0, 0, 0, 0.6);
+    }
+
+    .bento-card:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+    }
+
+    .bento-media {
+      position: relative;
+      border-radius: var(--r);
+      overflow: hidden;
+      background: #0f0f12;
+    }
+
+    .bento-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    .bento-card--lg .bento-media { height: 440px; }
+    .bento-col .bento-card .bento-media { height: 240px; }
+
+    /* ░░ Card flow preview — hover/focus-to-play screenshot sequence (mini Option C) ░░ */
+    .flowcard { position: absolute; inset: 0; }
+    .flowcard__slide {
+      position: absolute; inset: 0; opacity: 0; transform: translateX(22px);
+      will-change: transform, opacity;
+    }
+    .flowcard__slide img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+    /* Resting state: hold the first screenshot static until hover/focus. */
+    .flowcard__slide:nth-child(1) { opacity: 1; transform: translateX(0); }
+    /* Stagger delays — only take effect once an animation-name is set (on hover). */
+    .flowcard__slide:nth-child(2) { animation-delay: 2.5s; }
+    .flowcard__slide:nth-child(3) { animation-delay: 5s; }
+    .flowcard__slide:nth-child(4) { animation-delay: 7.5s; }
+    .flowcard__dots {
+      position: absolute; left: 14px; bottom: 12px; z-index: 2;
+      display: flex; gap: 6px; padding: 5px 8px; border-radius: 999px;
+      background: rgba(10, 10, 12, 0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      opacity: 0; transition: opacity 0.25s ease;
+    }
+    .flowcard__dots span {
+      width: 16px; height: 4px; border-radius: 999px; background: rgba(255, 255, 255, 0.22);
+      overflow: hidden; position: relative;
+    }
+    .flowcard__dots span::after {
+      content: ""; position: absolute; inset: 0; background: #d5aa0d; transform-origin: left;
+      transform: scaleX(0);
+    }
+    .flowcard__dots span:nth-child(2)::after { animation-delay: 2.5s; }
+    .flowcard__dots span:nth-child(3)::after { animation-delay: 5s; }
+    .flowcard__dots span:nth-child(4)::after { animation-delay: 7.5s; }
+
+    @keyframes flowcard-slide {
+      0%   { opacity: 0; transform: translateX(22px); }
+      4%   { opacity: 1; transform: translateX(0); }
+      22%  { opacity: 1; transform: translateX(0); }
+      26%  { opacity: 0; transform: translateX(-22px); }
+      100% { opacity: 0; transform: translateX(-22px); }
+    }
+    @keyframes flowcard-dot {
+      0%     { transform: scaleX(0); }
+      4%     { transform: scaleX(0); }
+      25%    { transform: scaleX(1); }
+      25.01% { transform: scaleX(0); }
+      100%   { transform: scaleX(0); }
+    }
+
+    /* Play only on hover / keyboard focus — and only when motion is welcome.
+       Longhands (not the shorthand) so the per-slide delays above survive. */
+    @media (prefers-reduced-motion: no-preference) {
+      .bento-card:hover .flowcard__slide,
+      .bento-card:focus-within .flowcard__slide {
+        animation-name: flowcard-slide;
+        animation-duration: 10s;
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: infinite;
+      }
+      .bento-card:hover .flowcard__dots,
+      .bento-card:focus-within .flowcard__dots { opacity: 1; }
+      .bento-card:hover .flowcard__dots span::after,
+      .bento-card:focus-within .flowcard__dots span::after {
+        animation-name: flowcard-dot;
+        animation-duration: 10s;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+      }
+    }
+
+    /* Image overlays: status badges + a stat chip */
+    .bento-badges {
+      position: absolute;
+      left: var(--s-4);
+      top: var(--s-4);
+      display: flex;
+      gap: var(--s-2);
+    }
+
+    .bento-badge {
+      font-family: "Inter", "Inter Placeholder", sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(14, 14, 16, 0.72);
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+      color: #fff;
+      border: 1px solid var(--line-dark);
+    }
+
+    .bento-stat {
+      position: absolute;
+      right: var(--s-4);
+      top: var(--s-4);
+      display: flex;
+      flex-direction: column;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: rgba(14, 14, 16, 0.82);
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+      border: 1px solid var(--line-dark);
+      color: #fff;
+    }
+
+    .bento-stat b { font-size: 16px; font-weight: 700; line-height: 1; }
+    .bento-stat span { font-size: 11px; color: var(--on-dark-2); margin-top: 3px; }
+
+    /* Card footer: text + circular arrow CTA */
+    .bento-foot {
+      display: flex;
+      gap: var(--s-6);
+      align-items: flex-end;
+      padding: var(--s-6) var(--s-4) var(--s-4);
+    }
+
+    .bento-col .bento-card .bento-foot { gap: var(--s-4); padding: var(--s-6) var(--s-3) var(--s-3); }
+
+    .bento-foot-text {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-3);
+    }
+
+    .bento-meta {
+      font-family: "Inter", "Inter Placeholder", sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--on-dark-2);
+    }
+
+    .bento-title {
+      margin: 0;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      line-height: 1.15;
+      color: var(--on-dark);
+    }
+
+    .bento-card--lg .bento-title { font-size: 30px; }
+    .bento-col .bento-card .bento-title { font-size: 24px; line-height: 1.2; }
+
+    .bento-desc {
+      margin: 0;
+      font-family: "Inter", "Inter Placeholder", sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.78);    /* ~8:1 — AAA */
+      max-width: 520px;
+    }
+
+    .bento-col .bento-card .bento-desc { font-size: 15px; line-height: 1.55; }
+
+    /* Gold circular CTA — gradient colorB, dark glyph (~9.6:1, AAA) */
+    .bento-go {
+      flex: 0 0 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #d5aa0d;
+      color: #1a1509;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.25s ease;
+    }
+
+    .bento-col .bento-card .bento-go { flex-basis: 48px; height: 48px; }
+    a.bento-card:hover .bento-go { transform: rotate(-45deg); }
+
+    /* "More work" list card */
+    .bento-list {
+      background: #15151a;
+      border: 1px solid var(--line-dark);
+      border-radius: 24px;
+      padding: var(--s-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-2);
+    }
+
+    .bento-list-label {
+      font-family: "Inter", "Inter Placeholder", sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--on-dark-2);
+      margin-bottom: var(--s-1);
+    }
+
+    .bento-list-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 var(--s-3);
+      margin: 0 calc(var(--s-3) * -1);
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--on-dark);
+      font-size: 15px;
+      font-weight: 500;
+      transition: background 0.2s ease;
+    }
+
+    a.bento-list-row:hover { background: rgba(255, 255, 255, 0.06); }
+    .bento-list-row > span { font-size: 13px; color: var(--on-dark-2); }
+    .bento-list-row--soon { color: var(--on-dark-2); cursor: default; }
+
+    /* ─── Nav inside the hero (home only) ────────────────────────
+       The shared .cs-nav is light glass + sticky. On the home page it
+       floats over the shader as a low-opacity dark glass bar. */
+    .home-hero-nav {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 3;
+      /* lower-opacity dark glass — "flipped" from the light bar */
+      background: rgba(14, 14, 16, 0.28);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    /* Logo reads white against the shader */
+    .home-hero-nav .cs-nav-logo svg path { fill: #ffffff; }
+
+    /* Links: light lavender at rest, white on hover.
+       Combined with the hero scrim + glass, the behind-text luminance
+       stays dark enough for >= 7:1 even over the brightest shader hues
+       (AAA for normal-size text). */
+    .home-hero-nav .cs-nav-link { color: #ece7ff; }
+    .home-hero-nav .cs-nav-link:hover { color: #ffffff; }
+
+    /* Divider: flip to a faint light hairline on the dark bar */
+    .home-hero-nav .cs-nav-divider { background: var(--line-dark); }
+
+    /* "Email me" CTA: warm gold pill (gradient colorB) with a warm
+       near-black label — ~9.6:1, AAA, and tuned to the shader hues. */
+    .home-hero-nav .cs-nav-btn {
+      background: #d5aa0d;
+      color: #1a1509;
+    }
+
+    @media (max-width: 1199.98px) {
+      .home-hero-title { font-size: 60px; }
+    }
+
+    @media (max-width: 809.98px) {
+      .home-hero-title { font-size: 40px; max-width: 18ch; }
+
+      /* Bento collapses to a single stacked column */
+      .work-head-title { font-size: 32px; }
+      .bento-card--lg .bento-media { height: 300px; }
+      .bento-card--lg .bento-title { font-size: 24px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main>
+
+    <!-- Hero (nav lives inside so it floats over the shader) -->
+    <section class="cs-band home-hero">
+      <canvas class="home-hero-shader" id="hero-shader" aria-hidden="true"></canvas>
+      <div class="home-hero-scrim" aria-hidden="true"></div>
+
+      <!-- ─── Navigation ──────────────────────────────────────── -->
+      <header class="cs-nav home-hero-nav">
+        <div class="cs-nav-inner">
+          <a href="./index.html" class="cs-nav-logo" aria-label="Home">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32" aria-hidden="true">
+              <path d="M 0 4 C 0 1.791 1.791 0 4 0 L 4 32 C 1.791 32 0 30.209 0 28 Z" fill="#ffffff"/>
+              <path d="M 0 28 L 20 28 C 20 30.209 18.209 32 16 32 L 4 32 C 1.791 32 0 30.209 0 28 Z M 0 4 C 0 1.791 1.791 0 4 0 L 16 0 C 18.209 0 20 1.791 20 4 Z M 16 24 C 14.895 24 14 23.105 14 22 L 14 10 C 14 8.895 14.895 8 16 8 C 17.105 8 18 8.895 18 10 L 18 22 C 18 23.105 17.105 24 16 24 Z M 8 24 C 6.895 24 6 23.105 6 22 L 6 10 C 6 8.895 6.895 8 8 8 C 9.105 8 10 8.895 10 10 L 10 22 C 10 23.105 9.105 24 8 24 Z" fill="#ffffff"/>
+              <path d="M 8 18 C 6.895 18 6 17.105 6 16 C 6 14.895 6.895 14 8 14 L 16 14 C 17.105 14 18 14.895 18 16 C 18 17.105 17.105 18 16 18 Z" fill="#ffffff"/>
+            </svg>
+          </a>
+          <div class="cs-nav-links">
+            <a href="#work" class="cs-nav-link">Work</a>
+            <a href="https://framerusercontent.com./assets/Z1bERh9xT0RfSlq8lPXX3Gspy4.pdf" download class="cs-nav-link" style="padding:10px;">Resume</a>
+            <button class="cs-nav-btn" data-email-copy aria-live="polite">Email me</button>
+          </div>
+        </div>
+        <div class="cs-nav-divider"></div>
+      </header>
+
+      <div class="cs-inner">
+        <div class="home-hero-copy">
+          <h1 class="home-hero-title">Building the software between your team and their best day.</h1>
+          <p class="home-hero-eyebrow">Full-stack product design engineer for startups and operations moving fast.</p>
+        </div>
+
+        <!-- Selected work — bento, sitting directly on the shader -->
+        <div class="work" id="work">
+          <div class="work-head">
+            <div class="work-head-copy">
+              <span class="work-head-kicker">Selected work</span>
+              <h2 class="work-head-title">Tools that took the busywork out.</h2>
+            </div>
+          </div>
+
+          <div class="bento">
+
+            <!-- Featured: Title Document Extractor -->
+            <a class="bento-card bento-card--lg" href="./casestudy-title-extraction.html"
+               aria-label="Automating Title Document Retrieval — read the case study">
+              <div class="bento-media">
+                <!-- ░░ CARD SHOWCASE · flow preview (mini Option C) ░░
+                     To revert to a static image, swap this .flowcard block
+                     back to the original <picture>. -->
+                <div class="flowcard">
+                  <div class="flowcard__slide">
+                    <img src="./assets/images/Empty%20state%20—%20redesign@2x.png" width="2880" height="1800"
+                         alt="Title Document Extractor — batch document automation web app" loading="lazy" decoding="async">
+                  </div>
+                  <div class="flowcard__slide">
+                    <img src="./assets/images/Staged%20files%20—%20redesign@2x.png" width="2880" height="1960"
+                         alt="" loading="lazy" decoding="async">
+                  </div>
+                  <div class="flowcard__slide">
+                    <img src="./assets/images/Processing%20—%20redesign@2x.png" width="2880" height="3240"
+                         alt="" loading="lazy" decoding="async">
+                  </div>
+                  <div class="flowcard__slide">
+                    <img src="./assets/images/Issue%20review%20modal%20—%20redesign@2x.png" width="2880" height="1800"
+                         alt="" loading="lazy" decoding="async">
+                  </div>
+                  <div class="flowcard__dots" aria-hidden="true">
+                    <span></span><span></span><span></span><span></span>
+                  </div>
+                </div>
+              </div>
+              <div class="bento-foot">
+                <div class="bento-foot-text">
+                  <span class="bento-meta">Internal SaaS · Web App</span>
+                  <h3 class="bento-title">Automating Title Document Retrieval</h3>
+                  <p class="bento-desc">Designed and developed an internal SaaS to extract and use AI to label nested documents from property title paperwork — turning a task that would take hours into minutes.</p>
+                </div>
+                <span class="bento-go" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+                </span>
+              </div>
+            </a>
+
+            <div class="bento-col">
+
+              <!-- Zoning Compliance Reporting -->
+              <a class="bento-card" href="./casestudy-page.html"
+                 aria-label="Reimagined Zoning Compliance Reporting — read the case study">
+                <div class="bento-media">
+                  <img src="./assets/images/CaseStudyCover.png" width="2880" height="2048"
+                       alt="Zoning Compliance Reporting — multi-step form and generated zoning report">
+                </div>
+                <div class="bento-foot">
+                  <div class="bento-foot-text">
+                    <span class="bento-meta">Internal SaaS · Web App</span>
+                    <h3 class="bento-title">Reimagined Zoning Compliance Reporting</h3>
+                    <p class="bento-desc">Designed and developed an internal SaaS to solve pitfalls in the zoning report writing and management process at an enterprise level.</p>
+                  </div>
+                  <span class="bento-go" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+                  </span>
+                </div>
+              </a>
+
+              <!-- More work -->
+              <div class="bento-list">
+                <span class="bento-list-label">More work</span>
+                <div class="bento-list-row bento-list-row--soon">
+                  Property Condition Assessment
+                  <span>In progress</span>
+                </div>
+                <div class="bento-list-row bento-list-row--soon">
+                  Quotting optimized
+                  <span>In progress</span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ─── Footer ──────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="cs-inner site-footer-inner">
+      <div class="site-footer-brand">
+        <a href="./index.html" class="cs-nav-logo" aria-label="Home">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32" aria-hidden="true">
+            <path d="M 0 4 C 0 1.791 1.791 0 4 0 L 4 32 C 1.791 32 0 30.209 0 28 Z"/>
+            <path d="M 0 28 L 20 28 C 20 30.209 18.209 32 16 32 L 4 32 C 1.791 32 0 30.209 0 28 Z M 0 4 C 0 1.791 1.791 0 4 0 L 16 0 C 18.209 0 20 1.791 20 4 Z M 16 24 C 14.895 24 14 23.105 14 22 L 14 10 C 14 8.895 14.895 8 16 8 C 17.105 8 18 8.895 18 10 L 18 22 C 18 23.105 17.105 24 16 24 Z M 8 24 C 6.895 24 6 23.105 6 22 L 6 10 C 6 8.895 6.895 8 8 8 C 9.105 8 10 8.895 10 10 L 10 22 C 10 23.105 9.105 24 8 24 Z"/>
+            <path d="M 8 18 C 6.895 18 6 17.105 6 16 C 6 14.895 6.895 14 8 14 L 16 14 C 17.105 14 18 14.895 18 16 C 18 17.105 17.105 18 16 18 Z"/>
+          </svg>
+        </a>
+        <p class="site-footer-tagline">Building tools that drive results.</p>
+      </div>
+      <div class="site-footer-cols">
+        <div class="site-footer-col">
+          <h4>Work</h4>
+          <a href="./casestudy-page.html">Zoning</a>
+          <a href="./casestudy-title-extraction.html">Title Extractor</a>
+        </div>
+        <div class="site-footer-col">
+          <h4>My Info</h4>
+          <a href="https://framerusercontent.com./assets/Z1bERh9xT0RfSlq8lPXX3Gspy4.pdf" download>Resume</a>
+          <a data-email-copy>Contact Me</a>
+        </div>
+      </div>
+    </div>
+    <div class="cs-inner site-footer-bottom">
+      <span>© 2026 Christian Hernandez</span>
+    </div>
+  </footer>
+
+  <script src="./assets/js/site.js"></script>
+
+  <!-- Hero shader: "Untitled" (get-shader id: 4740983) -->
+  <script type="module">
+    import { createShader } from 'shaders/js'
+
+    const canvas = document.getElementById('hero-shader')
+    if (canvas) {
+      try {
+        const shader = await createShader(canvas, {
+          components: [
+            {
+              type: 'GridDistortion',
+              id: 'idmuz3t5uehccz943uj',
+              props: {
+                blendMode: 'multiply',
+                gridSize: 9,
+                intensity: 4.7,
+              },
+              children: [
+                {
+                  type: 'FlowingGradient',
+                  id: 'idmuz3v8tb8iu9cro1c',
+                  props: {
+                    colorA: '#82759d',
+                    colorB: '#d5aa0d',
+                    colorC: '#cc3b29',
+                    colorD: '#cb8e54',
+                    speed: 0.5,
+                  },
+                },
+              ],
+            },
+          ],
+        })
+
+        // Keep the shader matched to the canvas as the hero resizes.
+        window.addEventListener('resize', () => shader.resize())
+      } catch (err) {
+        // WebGPU unavailable (or blocked) — leave the scrim as a solid fallback.
+        console.warn('Hero shader failed to initialize:', err)
+      }
+    }
+  </script>
+</body>
+</html>

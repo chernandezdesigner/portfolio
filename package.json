@@ -1,0 +1,10 @@
+{
+  "name": "chernandezdesigner.framer.website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Christian Hernandez portfolio — standalone static HTML/CSS/JS (no framework, no build step).",
+  "scripts": {
+    "preview": "npx serve .",
+    "start": "npx serve ."
+  }
+}

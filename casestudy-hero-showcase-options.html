@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hero Showcase — Options A / B / C — Title Document Extractor</title>
+  <link rel="stylesheet" href="./assets/css/site.css">
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       COMPARISON HARNESS ONLY.
+       This page exists so you can preview Options A / B / C side by side.
+       The dark design tokens below mirror the inline <style> block in
+       casestudy-title-extraction.html. When you pick an option, copy ONLY
+       the block delimited by its  "OPTION X — BEGIN / END"  comments (HTML)
+       and the matching  ".showcase-x"  CSS section into the case study page.
+       Nothing on this harness page needs to be copied.
+       ══════════════════════════════════════════════════════════════════ -->
+  <style>
+    /* Dark tokens — copied from casestudy-title-extraction.html */
+    :root {
+      --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-6:24px; --s-8:32px;
+      --s-12:48px; --s-16:64px; --s-24:96px;
+      --ink:rgba(255,255,255,0.92); --ink-2:rgba(255,255,255,0.72); --ink-3:rgba(255,255,255,0.5);
+      --accent:#d5aa0d; --accent-ink:#d5aa0d; --accent-tint:rgba(213,170,13,0.14);
+      --surface:#141418; --surface-card:#15151a; --ink-band:#0e0e10;
+      --line:rgba(255,255,255,0.12); --line-dark:rgba(255,255,255,0.14);
+      --r:16px; --r-sm:10px;
+    }
+    html, body { background:#0e0e10; color:var(--ink);
+      font-family:"Poppins","Poppins Placeholder",sans-serif; -webkit-font-smoothing:antialiased; }
+    .harness { max-width:1200px; margin:0 auto; padding:64px 80px 128px; }
+    .harness__h { font-family:"Inter","Inter Placeholder",sans-serif; font-size:13px;
+      font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--accent);
+      margin:72px 0 20px; }
+    .harness__h:first-child { margin-top:0; }
+    .harness__intro { color:var(--ink-2); font-size:16px; line-height:1.6; max-width:68ch; margin-bottom:8px; }
+    @media (max-width:809.98px){ .harness{ padding:40px 24px 80px; } }
+
+    /* ============================================================
+       OPTION A — "Ken Burns cross-fade stack"            (.showcase-a)
+       ============================================================ */
+    .showcase-a { position:relative; width:100%; isolation:isolate; }
+    /* soft accent-gold glow behind the frame */
+    .showcase-a::before {
+      content:""; position:absolute; z-index:0;
+      inset:8% 6%; border-radius:50%;
+      background:radial-gradient(60% 60% at 50% 50%, rgba(213,170,13,0.28), rgba(213,170,13,0) 70%);
+      filter:blur(48px); opacity:.9; pointer-events:none;
+    }
+    .showcase-a__frame {
+      position:relative; z-index:1;
+      width:100%; aspect-ratio:16/10; overflow:hidden;
+      border:1px solid var(--line); border-radius:var(--r);
+      background:#0b0b0d;
+      box-shadow:0 24px 60px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.4);
+    }
+    .showcase-a__slide {
+      position:absolute; inset:0; opacity:0;
+      animation:showA-fade 28s linear infinite;
+      will-change:opacity;
+    }
+    .showcase-a__slide img {
+      width:100%; height:100%; object-fit:cover; object-position:top center;
+      display:block; animation:showA-ken 28s ease-in-out infinite alternate;
+      will-change:transform;
+    }
+    .showcase-a__slide:nth-child(1){ animation-delay:0s; }
+    .showcase-a__slide:nth-child(2){ animation-delay:-7s; }
+    .showcase-a__slide:nth-child(3){ animation-delay:-14s; }
+    .showcase-a__slide:nth-child(4){ animation-delay:-21s; }
+    /* vary the pan/zoom origin per slide so it never feels mechanical */
+    .showcase-a__slide:nth-child(1) img{ transform-origin:top left; animation-delay:0s; }
+    .showcase-a__slide:nth-child(2) img{ transform-origin:top right; animation-delay:-7s; }
+    .showcase-a__slide:nth-child(3) img{ transform-origin:top center; animation-delay:-14s; }
+    .showcase-a__slide:nth-child(4) img{ transform-origin:center left; animation-delay:-21s; }
+    /* subtle top sheen so screenshots read as "under glass" */
+    .showcase-a__frame::after {
+      content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
+      background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0) 22%);
+      border-radius:var(--r);
+    }
+    @keyframes showA-fade {
+      0%   { opacity:0; }
+      3%   { opacity:1; }
+      22%  { opacity:1; }
+      25%  { opacity:0; }
+      100% { opacity:0; }
+    }
+    @keyframes showA-ken {
+      from { transform:scale(1.02); }
+      to   { transform:scale(1.12); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .showcase-a::before { filter:blur(48px); }
+      .showcase-a__slide { animation:none; opacity:0; }
+      .showcase-a__slide:nth-child(1) { opacity:1; }
+      .showcase-a__slide img { animation:none; transform:none; }
+    }
+
+    /* ============================================================
+       OPTION B — "Floating browser mock + parallax chips" (.showcase-b)
+       ============================================================ */
+    .showcase-b { position:relative; width:100%; padding:4% 3% 6%; isolation:isolate; }
+    .showcase-b::before {
+      content:""; position:absolute; z-index:0; inset:12% 10% 4%;
+      background:radial-gradient(55% 55% at 50% 45%, rgba(213,170,13,0.22), rgba(213,170,13,0) 72%);
+      filter:blur(52px); pointer-events:none;
+    }
+    .showcase-b__window {
+      position:relative; z-index:1; width:100%;
+      border:1px solid var(--line); border-radius:var(--r); overflow:hidden;
+      background:var(--surface-card);
+      box-shadow:0 30px 70px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.4);
+      animation:showB-float 9s ease-in-out infinite;
+      will-change:transform;
+    }
+    .showcase-b__bar {
+      display:flex; align-items:center; gap:8px;
+      height:40px; padding:0 14px;
+      background:#101014; border-bottom:1px solid var(--line);
+    }
+    .showcase-b__dot { width:11px; height:11px; border-radius:50%; background:rgba(255,255,255,0.18); }
+    .showcase-b__dot:nth-child(1){ background:#ed6a5e; }
+    .showcase-b__dot:nth-child(2){ background:#f4bf4f; }
+    .showcase-b__dot:nth-child(3){ background:#61c454; }
+    .showcase-b__addr {
+      margin-left:12px; flex:1; max-width:280px; height:22px; border-radius:999px;
+      background:rgba(255,255,255,0.05); border:1px solid var(--line);
+      display:flex; align-items:center; padding:0 12px;
+      font-family:"Inter","Inter Placeholder",sans-serif; font-size:12px; color:var(--ink-3);
+      white-space:nowrap; overflow:hidden;
+    }
+    .showcase-b__screen { width:100%; aspect-ratio:16/10; overflow:hidden; background:#0b0b0d; }
+    .showcase-b__screen img { width:100%; height:100%; object-fit:cover; object-position:top center; display:block; }
+
+    .showcase-b__chip {
+      position:absolute; z-index:2;
+      display:flex; align-items:center; gap:10px;
+      padding:10px 14px; border-radius:var(--r-sm);
+      background:rgba(21,21,26,0.92); border:1px solid var(--line);
+      box-shadow:0 12px 30px rgba(0,0,0,0.5);
+      backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+      font-family:"Inter","Inter Placeholder",sans-serif;
+      will-change:transform;
+    }
+    .showcase-b__chip-ic {
+      width:26px; height:26px; border-radius:7px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      background:var(--accent-tint); color:var(--accent); font-size:13px; font-weight:600;
+    }
+    .showcase-b__chip-t { font-size:13px; font-weight:600; color:var(--ink); line-height:1.2; }
+    .showcase-b__chip-s { font-size:11px; color:var(--ink-3); line-height:1.2; margin-top:2px; }
+    .showcase-b__spin {
+      width:14px; height:14px; border-radius:50%;
+      border:2px solid rgba(213,170,13,0.25); border-top-color:var(--accent);
+      animation:showB-spin 0.9s linear infinite;
+    }
+    .showcase-b__bar-track {
+      width:54px; height:5px; border-radius:999px; background:rgba(255,255,255,0.12); overflow:hidden;
+    }
+    .showcase-b__bar-fill { display:block; height:100%; width:66%; background:var(--accent); border-radius:999px; }
+
+    /* three depths — different drift amplitude + speed = parallax */
+    .showcase-b__chip--job  { top:14%;  left:-2%;  animation:showB-driftA 7s ease-in-out infinite; }
+    .showcase-b__chip--prog { top:46%;  right:-3%; animation:showB-driftB 9s ease-in-out infinite; }
+    .showcase-b__chip--done { bottom:9%; left:6%;  animation:showB-driftC 11s ease-in-out infinite; }
+
+    @keyframes showB-float   { 0%,100%{ transform:translateY(0) scale(1);} 50%{ transform:translateY(-10px) scale(1.006);} }
+    @keyframes showB-driftA  { 0%,100%{ transform:translate3d(0,0,0);} 50%{ transform:translate3d(6px,-14px,0);} }
+    @keyframes showB-driftB  { 0%,100%{ transform:translate3d(0,0,0);} 50%{ transform:translate3d(-8px,10px,0);} }
+    @keyframes showB-driftC  { 0%,100%{ transform:translate3d(0,0,0);} 50%{ transform:translate3d(4px,-8px,0);} }
+    @keyframes showB-spin    { to{ transform:rotate(360deg);} }
+
+    @media (max-width:640px){
+      .showcase-b__chip--prog { display:none; }          /* declutter on phones */
+      .showcase-b__chip { padding:8px 11px; }
+      .showcase-b__chip-t { font-size:12px; }
+      .showcase-b__chip--job { left:0; }
+      .showcase-b__chip--done { left:0; bottom:4%; }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .showcase-b__window,
+      .showcase-b__chip--job,.showcase-b__chip--prog,.showcase-b__chip--done { animation:none; transform:none; }
+      .showcase-b__spin { animation:none; }
+    }
+
+    /* ============================================================
+       OPTION C — "Guided flow walkthrough"               (.showcase-c)
+       ============================================================ */
+    .showcase-c { width:100%; }
+    .showcase-c__stage {
+      position:relative; width:100%; aspect-ratio:16/10; overflow:hidden;
+      border:1px solid var(--line); border-radius:var(--r); background:#0b0b0d;
+      box-shadow:0 20px 50px rgba(0,0,0,0.5);
+    }
+    .showcase-c__slide {
+      position:absolute; inset:0; opacity:0; transform:translateX(28px);
+      animation:showC-slide 20s ease-in-out infinite; will-change:transform,opacity;
+    }
+    .showcase-c__slide img { width:100%; height:100%; object-fit:cover; object-position:top center; display:block; }
+    .showcase-c__slide:nth-child(1){ animation-delay:0s; }
+    .showcase-c__slide:nth-child(2){ animation-delay:-5s; }
+    .showcase-c__slide:nth-child(3){ animation-delay:-10s; }
+    .showcase-c__slide:nth-child(4){ animation-delay:-15s; }
+
+    .showcase-c__cap {
+      display:flex; align-items:center; gap:14px;
+      margin-top:var(--s-6); min-height:28px;
+    }
+    .showcase-c__cap-num {
+      font-family:"Inter","Inter Placeholder",sans-serif; font-size:12px; font-weight:700;
+      letter-spacing:.08em; color:var(--accent); flex-shrink:0;
+    }
+    .showcase-c__cap-wrap { position:relative; flex:1; min-height:24px; }
+    .showcase-c__cap-line {
+      position:absolute; inset:0; opacity:0; transform:translateY(6px);
+      font-size:clamp(15px,2.2vw,18px); font-weight:500; color:var(--ink);
+      animation:showC-cap 20s ease-in-out infinite; will-change:transform,opacity;
+    }
+    .showcase-c__cap-line:nth-child(1){ animation-delay:0s; }
+    .showcase-c__cap-line:nth-child(2){ animation-delay:-5s; }
+    .showcase-c__cap-line:nth-child(3){ animation-delay:-10s; }
+    .showcase-c__cap-line:nth-child(4){ animation-delay:-15s; }
+
+    .showcase-c__dots { display:flex; gap:10px; margin-top:var(--s-4); }
+    .showcase-c__dot {
+      width:28px; height:5px; border-radius:999px; background:rgba(255,255,255,0.16);
+      overflow:hidden; position:relative;
+    }
+    .showcase-c__dot::after {
+      content:""; position:absolute; inset:0; background:var(--accent); transform-origin:left;
+      transform:scaleX(0); animation:showC-dot 20s linear infinite;
+    }
+    .showcase-c__dot:nth-child(1)::after{ animation-delay:0s; }
+    .showcase-c__dot:nth-child(2)::after{ animation-delay:-5s; }
+    .showcase-c__dot:nth-child(3)::after{ animation-delay:-10s; }
+    .showcase-c__dot:nth-child(4)::after{ animation-delay:-15s; }
+
+    @keyframes showC-slide {
+      0%  { opacity:0; transform:translateX(28px); }
+      4%  { opacity:1; transform:translateX(0); }
+      22% { opacity:1; transform:translateX(0); }
+      26% { opacity:0; transform:translateX(-28px); }
+      100%{ opacity:0; transform:translateX(-28px); }
+    }
+    @keyframes showC-cap {
+      0%  { opacity:0; transform:translateY(6px); }
+      4%  { opacity:1; transform:translateY(0); }
+      22% { opacity:1; transform:translateY(0); }
+      26% { opacity:0; transform:translateY(-6px); }
+      100%{ opacity:0; transform:translateY(-6px); }
+    }
+    @keyframes showC-dot {
+      0%  { transform:scaleX(0); }
+      4%  { transform:scaleX(0); }
+      25% { transform:scaleX(1); }
+      25.01% { transform:scaleX(0); }
+      100%{ transform:scaleX(0); }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .showcase-c__slide { animation:none; opacity:0; transform:none; }
+      .showcase-c__slide:nth-child(1){ opacity:1; }
+      .showcase-c__cap-line { animation:none; opacity:0; transform:none; }
+      .showcase-c__cap-line:nth-child(1){ opacity:1; }
+      .showcase-c__dot::after { animation:none; }
+      .showcase-c__dot:nth-child(1)::after { transform:scaleX(1); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="harness">
+
+    <!-- ───────────────────────── OPTION A ───────────────────────── -->
+    <p class="harness__h">Option A — Ken Burns cross-fade stack</p>
+    <p class="harness__intro">Atmospheric, premium, screenshot-agnostic. Slow zoom/pan + cross-fade on a 28s loop.</p>
+
+    <!-- OPTION A — BEGIN  (paste in place of the hero .cs-frame--wide placeholder) -->
+    <div class="showcase-a" aria-label="Title Document Extractor — product screenshots">
+      <div class="showcase-a__frame">
+        <div class="showcase-a__slide">
+          <img src="./assets/images/Empty%20state%20—%20redesign@2x.png" width="2880" height="1800"
+               alt="Title Document Extractor empty state with a drag-and-drop zone" loading="eager" decoding="async">
+        </div>
+        <div class="showcase-a__slide">
+          <img src="./assets/images/Staged%20files%20—%20redesign@2x.png" width="2880" height="1960"
+               alt="" loading="lazy" decoding="async">
+        </div>
+        <div class="showcase-a__slide">
+          <img src="./assets/images/Processing%20—%20redesign@2x.png" width="2880" height="3240"
+               alt="" loading="lazy" decoding="async">
+        </div>
+        <div class="showcase-a__slide">
+          <img src="./assets/images/Issue%20review%20modal%20—%20redesign@2x.png" width="2880" height="1800"
+               alt="" loading="lazy" decoding="async">
+        </div>
+      </div>
+    </div>
+    <!-- OPTION A — END -->
+
+
+    <!-- ───────────────────────── OPTION B ───────────────────────── -->
+    <p class="harness__h">Option B — Floating browser mock + parallax detail chips</p>
+    <p class="harness__intro">Looks like a polished product shot: window chrome, idle float, three chips drifting at different depths.</p>
+
+    <!-- OPTION B — BEGIN  (paste in place of the hero .cs-frame--wide placeholder) -->
+    <div class="showcase-b" aria-label="Title Document Extractor product window">
+      <div class="showcase-b__window">
+        <div class="showcase-b__bar" aria-hidden="true">
+          <span class="showcase-b__dot"></span>
+          <span class="showcase-b__dot"></span>
+          <span class="showcase-b__dot"></span>
+          <span class="showcase-b__addr">app.titleextractor — Batch</span>
+        </div>
+        <div class="showcase-b__screen">
+          <img src="./assets/images/Staged%20files%20—%20redesign@2x.png" width="2880" height="1960"
+               alt="Title Document Extractor with a batch of title PDFs staged for processing"
+               loading="eager" decoding="async">
+        </div>
+      </div>
+
+      <!-- floating detail chips -->
+      <div class="showcase-b__chip showcase-b__chip--job" aria-hidden="true">
+        <span class="showcase-b__spin"></span>
+        <span>
+          <span class="showcase-b__chip-t">Exhibit B-4.pdf</span>
+          <span class="showcase-b__chip-s">renaming…</span>
+        </span>
+      </div>
+      <div class="showcase-b__chip showcase-b__chip--prog" aria-hidden="true">
+        <span class="showcase-b__chip-ic">↑</span>
+        <span>
+          <span class="showcase-b__chip-t">9 of 12 done</span>
+          <span class="showcase-b__bar-track"><span class="showcase-b__bar-fill"></span></span>
+        </span>
+      </div>
+      <div class="showcase-b__chip showcase-b__chip--done" aria-hidden="true">
+        <span class="showcase-b__chip-ic">✓</span>
+        <span>
+          <span class="showcase-b__chip-t">ZIP ready</span>
+          <span class="showcase-b__chip-s">renamed · download</span>
+        </span>
+      </div>
+    </div>
+    <!-- OPTION B — END -->
+
+
+    <!-- ───────────────────────── OPTION C ───────────────────────── -->
+    <p class="harness__h">Option C — Guided flow walkthrough</p>
+    <p class="harness__intro">A ~20s auto-advancing demo of the real flow: drop → stage → process → review, with synced caption + progress dots.</p>
+
+    <!-- OPTION C — BEGIN  (paste in place of the hero .cs-frame--wide placeholder) -->
+    <div class="showcase-c" aria-label="Title Document Extractor product walkthrough">
+      <div class="showcase-c__stage">
+        <div class="showcase-c__slide">
+          <img src="./assets/images/Empty%20state%20—%20redesign@2x.png" width="2880" height="1800"
+               alt="Step 1: empty state drop zone" loading="eager" decoding="async">
+        </div>
+        <div class="showcase-c__slide">
+          <img src="./assets/images/Staged%20files%20—%20redesign@2x.png" width="2880" height="1960"
+               alt="" loading="lazy" decoding="async">
+        </div>
+        <div class="showcase-c__slide">
+          <img src="./assets/images/Processing%20—%20redesign@2x.png" width="2880" height="3240"
+               alt="" loading="lazy" decoding="async">
+        </div>
+        <div class="showcase-c__slide">
+          <img src="./assets/images/Issue%20review%20modal%20—%20redesign@2x.png" width="2880" height="1800"
+               alt="" loading="lazy" decoding="async">
+        </div>
+      </div>
+
+      <div class="showcase-c__cap">
+        <span class="showcase-c__cap-num">FLOW</span>
+        <span class="showcase-c__cap-wrap">
+          <span class="showcase-c__cap-line">Drop a whole batch of title PDFs.</span>
+          <span class="showcase-c__cap-line">Files stage instantly — no waiting on uploads.</span>
+          <span class="showcase-c__cap-line">Each file moves through queued → renaming → done.</span>
+          <span class="showcase-c__cap-line">Anything that fails comes back flagged for review.</span>
+        </span>
+      </div>
+
+      <div class="showcase-c__dots" aria-hidden="true">
+        <span class="showcase-c__dot"></span>
+        <span class="showcase-c__dot"></span>
+        <span class="showcase-c__dot"></span>
+        <span class="showcase-c__dot"></span>
+      </div>
+    </div>
+    <!-- OPTION C — END -->
+
+  </div>
+</body>
+</html>

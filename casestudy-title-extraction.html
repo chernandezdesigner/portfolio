@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1200">
+  <title>Title Document Extractor — Christian Hernandez</title>
+  <meta name="description" content="Automating Title Document Retrieval — a drag-and-drop batch document automation web app processing 6,000+ documents a month.">
+  <link rel="icon" type="image/svg+xml" href="./assets/images/favicon.svg">
+  <link rel="stylesheet" href="./assets/css/site.css">
+  <!-- Hero animation variants (A/B/C). Switch via data-variant on .hero-showcase below. -->
+  <link rel="stylesheet" href="./assets/css/hero-showcase.css">
+
+  <!-- Fonts — matching existing portfolio font stack -->
+  <style data-framer-font-css="">
+    @font-face { font-family: "Poppins"; src: url("/assets/fonts/JMWNCAGBH3TLANIVQPVABVAVNV5QERTH-6d2cb097.woff2"); font-display: swap; font-style: normal; font-weight: 400 }
+    @font-face { font-family: "Poppins"; src: url("/assets/fonts/UCDYLFFGLZRGCFY5GYDYM5LDB52BAR5M-ba81eacf.woff2"); font-display: swap; font-style: normal; font-weight: 500 }
+    @font-face { font-family: "Poppins"; src: url("/assets/fonts/24R4YOH3G2SFDSTCNHOVGYEX3DMRC3CE-22d9a39f.woff2"); font-display: swap; font-style: normal; font-weight: 600 }
+    @font-face { font-family: "Poppins"; src: url("/assets/fonts/FYG6OCH7XOLUUSZTIZE65ATBZWF623O4-887d8f2f.woff2"); font-display: swap; font-style: normal; font-weight: 700 }
+    @font-face { font-family: "Inter"; src: url("/assets/fonts/UjlFhCnUjxhNfep4oYBPqnEssyo-5a028a33.woff2"); font-display: swap; font-style: normal; font-weight: 500 }
+    @font-face { font-family: "Poppins Placeholder"; src: local("Arial"); ascent-override: 91.95%; descent-override: 30.94%; line-gap-override: 7.96%; size-adjust: 113.11% }
+    @font-face { font-family: "Inter Placeholder"; src: local("Arial"); ascent-override: 89.79%; descent-override: 22.36%; line-gap-override: 0.00%; size-adjust: 107.89% }
+  </style>
+
+  <style>
+    /* ─── Design tokens ─────────────────────────────────────── */
+    :root {
+      /* Spacing — 8pt scale */
+      --s-1: 4px;
+      --s-2: 8px;
+      --s-3: 12px;
+      --s-4: 16px;
+      --s-6: 24px;
+      --s-8: 32px;
+      --s-12: 48px;
+      --s-16: 64px;
+      --s-24: 96px;
+
+      /* Ink — white-on-dark */
+      --ink: rgba(255, 255, 255, 0.92);
+      --ink-2: rgba(255, 255, 255, 0.72);
+      --ink-3: rgba(255, 255, 255, 0.5);
+
+      /* Accent — warm gold pulled from the hero shader (colorB) */
+      --accent: #d5aa0d;
+      --accent-ink: #d5aa0d;
+      --accent-tint: rgba(213, 170, 13, 0.14);
+
+      /* Surfaces — dark */
+      --surface: #141418;
+      --surface-card: #15151a;
+      --ink-band: #0e0e10;
+      --on-dark: rgba(255, 255, 255, 0.92);
+      --on-dark-2: rgba(255, 255, 255, 0.64);
+
+      /* Lines — faint light hairlines on dark */
+      --line: rgba(255, 255, 255, 0.12);
+      --line-dark: rgba(255, 255, 255, 0.14);
+
+      /* Radius */
+      --r: 16px;
+      --r-sm: 10px;
+
+      /* Type */
+      --measure: 68ch;
+    }
+
+    /* ─── Reset ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      background: #0e0e10;
+    }
+
+    body {
+      font-family: "Poppins", "Poppins Placeholder", sans-serif;
+      background: #0e0e10;
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Nav — dark glass bar, matching the home design system ─ */
+    .cs-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+      background: rgba(14, 14, 16, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .cs-nav-logo svg path { fill: #ffffff; }
+
+    .cs-nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 72px;
+    }
+
+    .cs-nav-logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .cs-nav-logo svg {
+      width: 20px;
+      height: 32px;
+    }
+
+    .cs-nav-links {
+      display: flex;
+      align-items: center;
+      gap: var(--s-2);
+    }
+
+    .cs-nav-link {
+      font-family: "Inter", "Inter Placeholder", sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      line-height: 2em;
+      color: #ece7ff;
+      text-decoration: none;
+      padding: 10px;
+      border-radius: 50px;
+      transition: color 0.15s;
+    }
+
+    .cs-nav-link:hover { color: #ffffff; }
+
+    .cs-nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s-2);
+      background: #d5aa0d;
+      color: #1a1509;
+      font-family: "Poppins", "Poppins Placeholder", sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      border: none;
+      border-radius: 64px;
+      padding: 10px 20px;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: opacity 0.15s;
+    }
+
+    .cs-nav-btn:hover { opacity: 0.85; }
+
+    .cs-nav-divider {
+      height: 1px;
+      background: var(--line);
+    }
+
+    /* ─── Band + inner wrapper ───────────────────────────────── */
+    .cs-band {
+      width: 100%;
+      padding: var(--s-24) 0;
+    }
+
+    .cs-band--tint { background: var(--surface); }
+
+    .cs-band--dark {
+      background: var(--ink-band);
+      color: var(--on-dark);
+    }
+
+    .cs-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-left: 80px;
+      padding-right: 80px;
+    }
+
+    /* ─── Section header pattern ─────────────────────────────── */
+    .cs-eyebrow {
+      font-family: "Inter", "Inter Placeholder", sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-ink);
+      margin-bottom: var(--s-3);
+    }
+
+    .cs-band--dark .cs-eyebrow { color: var(--accent); }
+
+    .cs-heading {
+      font-size: 32px;
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: var(--s-6);
+    }
+
+    .cs-band--dark .cs-heading { color: var(--on-dark); }
+
+    .cs-lead {
+      font-size: 22px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--ink);
+      max-width: var(--measure);
+      margin-bottom: var(--s-8);
+    }
+
+    .cs-band--dark .cs-lead { color: var(--on-dark); }
+
+    /* ─── Body copy ──────────────────────────────────────────── */
+    .cs-body {
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1.6;
+      color: var(--ink-2);
+      max-width: var(--measure);
+    }
+
+    .cs-body + .cs-body { margin-top: var(--s-4); }
+
+    .cs-band--dark .cs-body { color: var(--on-dark-2); }
+
+    .cs-em {
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .cs-em--accent {
+      font-weight: 600;
+      color: var(--accent-ink);
+    }
+
+    .cs-band--dark .cs-em { color: var(--on-dark); }
+    .cs-band--dark .cs-em--accent { color: var(--accent); }
+
+    /* ─── Image placeholder frame ────────────────────────────── */
+    .cs-frame {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: var(--surface);
+      border: 1.5px dashed var(--line);
+      border-radius: var(--r);
+      color: var(--ink-3);
+      font-family: "Inter", "Inter Placeholder", sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      text-align: center;
+      padding: var(--s-6);
+    }
+
+    .cs-frame--dark {
+      background: rgba(255, 255, 255, 0.03);
+      border-color: var(--line-dark);
+      color: var(--on-dark-2);
+    }
+
+    .cs-frame--wide { aspect-ratio: 21 / 9; }
+    .cs-frame--square { aspect-ratio: 4 / 3; }
+
+    /* ─── Hero ───────────────────────────────────────────────── */
+    .cs-hero { padding-top: var(--s-16); }
+
+    .cs-hero-title {
+      font-size: 56px;
+      font-weight: 500;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      max-width: 16ch;
+      margin-bottom: var(--s-6);
+    }
+
+    .cs-hero-deck {
+      font-size: 22px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--ink-2);
+      max-width: var(--measure);
+      margin-bottom: var(--s-12);
+    }
+
+    .cs-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--s-8) var(--s-6);
+      margin-bottom: var(--s-16);
+    }
+
+    .cs-meta-label {
+      font-family: "Inter", "Inter Placeholder", sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: var(--s-2);
+    }
+
+    .cs-meta-value {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--ink);
+      line-height: 1.4;
+    }
+
+    /* ─── Cards (shared base) ────────────────────────────────── */
+    .cs-card {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-3);
+      padding: var(--s-8);
+      background: var(--surface-card);
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .cs-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(213, 170, 13, 0.5);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    }
+
+    .cs-card-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: var(--r-sm);
+      background: var(--accent-tint);
+      color: var(--accent-ink);
+      font-family: "Inter", "Inter Placeholder", sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: var(--s-2);
+    }
+
+    .cs-card-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+
+    .cs-card-body {
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.55;
+      color: var(--ink-2);
+    }
+
+    .cs-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s-6);
+      margin-top: var(--s-8);
+    }
+
+    /* ─── Solutions — 6-col symmetric grid (3 over 2) ─────────── */
+    .cs-solutions-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: var(--s-6);
+      margin-top: var(--s-8);
+    }
+
+    .cs-solutions-grid .cs-card { grid-column: span 2; }
+    .cs-solutions-grid .cs-card:nth-child(4) { grid-column: 2 / span 2; }
+    .cs-solutions-grid .cs-card:nth-child(5) { grid-column: 4 / span 2; }
+
+    /* ─── Before / After split ───────────────────────────────── */
+    .cs-ba-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      overflow: hidden;
+      margin-top: var(--s-8);
+    }
+
+    .cs-ba-col { padding: var(--s-12); }
+
+    .cs-ba-col--before {
+      background: var(--surface);
+      border-right: 1px solid var(--line);
+    }
+
+    .cs-ba-col--after { background: var(--accent-tint); }
+
+    .cs-ba-badge {
+      display: inline-block;
+      font-family: "Inter", "Inter Placeholder", sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: var(--s-1);
+    }
+
+    .cs-ba-col--after .cs-ba-badge { color: var(--accent-ink); }
+
+    .cs-ba-scope {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--ink-3);
+      margin-bottom: var(--s-8);
+    }
+
+    /* Figma-exported flow diagrams (transparent SVG) */
+    .cs-ba-flow {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .cs-ba-frame { margin-top: var(--s-8); }
+
+    /* ─── Key Design Decisions (dark band) ───────────────────── */
+    .cs-decisions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-16);
+      margin-top: var(--s-12);
+    }
+
+    .cs-decision {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: var(--s-8);
+      align-items: start;
+    }
+
+    .cs-decision-number {
+      font-family: "Poppins", "Poppins Placeholder", sans-serif;
+      font-size: 88px;
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--accent);
+      opacity: 0.55;
+    }
+
+    .cs-decision-title {
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--on-dark);
+      margin-bottom: var(--s-4);
+      line-height: 1.25;
+    }
+
+    /* ─── Process ────────────────────────────────────────────── */
+    .cs-process-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-8);
+      margin-top: var(--s-8);
+    }
+
+    .cs-process-item {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: var(--s-6);
+      align-items: start;
+    }
+
+    .cs-process-num {
+      font-family: "Inter", "Inter Placeholder", sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent-ink);
+      padding-top: 2px;
+    }
+
+    .cs-process-item-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: var(--s-2);
+    }
+
+    /* ─── Results (stat cards) ───────────────────────────────── */
+    .cs-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--s-6);
+      margin-top: var(--s-8);
+    }
+
+    .cs-stat-card {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-4);
+      padding: var(--s-8);
+      background: var(--surface-card);
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+    }
+
+    .cs-stat-number {
+      font-size: 52px;
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--accent-ink);
+      white-space: nowrap;
+    }
+
+    /* Scaled-down "approximately" prefix */
+    .cs-stat-approx {
+      font-size: 0.45em;
+      font-weight: 500;
+      vertical-align: 0.3em;
+      margin-right: 0.04em;
+      opacity: 0.6;
+    }
+
+    .cs-stat-text {
+      min-width: 0;
+      padding-top: var(--s-4);
+      border-top: 1px solid var(--line);
+    }
+
+    .cs-stat-label {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: var(--s-2);
+      line-height: 1.3;
+    }
+
+    .cs-stat-desc {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--ink-3);
+      line-height: 1.45;
+    }
+
+    /* ─── Closing ────────────────────────────────────────────── */
+    .cs-closing-text {
+      font-size: 28px;
+      font-weight: 400;
+      line-height: 1.45;
+      color: var(--ink);
+      max-width: var(--measure);
+    }
+
+    /* ─── Reduced motion ─────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      .cs-card { transition: none; }
+      .cs-card:hover { transform: none; }
+    }
+
+    /* ─── Responsive — tablet (≤1199.98px) ───────────────────── */
+    @media (max-width: 1199.98px) {
+      .cs-band { padding: var(--s-16) 0; }
+      .cs-inner { padding-left: 48px; padding-right: 48px; }
+
+      .cs-hero-title { font-size: 44px; }
+
+      .cs-meta-grid { grid-template-columns: repeat(2, 1fr); }
+
+      .cs-solutions-grid { grid-template-columns: repeat(2, 1fr); gap: var(--s-6); }
+      .cs-solutions-grid .cs-card,
+      .cs-solutions-grid .cs-card:nth-child(4),
+      .cs-solutions-grid .cs-card:nth-child(5) { grid-column: auto; }
+    }
+
+    /* ─── Responsive — mobile (≤809.98px) ────────────────────── */
+    @media (max-width: 809.98px) {
+      .cs-band { padding: var(--s-12) 0; }
+      .cs-inner { padding-left: 24px; padding-right: 24px; }
+      .cs-nav-inner { padding: 0 24px; }
+
+      .cs-hero-title { font-size: 34px; }
+      .cs-hero-deck { font-size: 19px; }
+      .cs-heading { font-size: 26px; }
+      .cs-lead { font-size: 19px; }
+
+      .cs-meta-grid { grid-template-columns: 1fr 1fr; gap: var(--s-6); }
+      .cs-grid-3 { grid-template-columns: 1fr; }
+      .cs-solutions-grid { grid-template-columns: 1fr; }
+
+      .cs-stat-grid { grid-template-columns: 1fr; }
+      .cs-stat-number { font-size: 44px; }
+
+      .cs-ba-grid { grid-template-columns: 1fr; }
+      .cs-ba-col { padding: var(--s-8); }
+      .cs-ba-col--before {
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .cs-decision { grid-template-columns: 1fr; gap: var(--s-3); }
+      .cs-decision-number { font-size: 64px; }
+
+      .cs-closing-text { font-size: 22px; }
+
+      .cs-nav-link { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ─── Navigation ──────────────────────────────────────────── -->
+  <header class="cs-nav">
+    <div class="cs-nav-inner">
+      <a href="./index.html" class="cs-nav-logo" aria-label="Home">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32" aria-hidden="true">
+          <path d="M 0 4 C 0 1.791 1.791 0 4 0 L 4 32 C 1.791 32 0 30.209 0 28 Z" fill="rgb(0,0,0)"/>
+          <path d="M 0 28 L 20 28 C 20 30.209 18.209 32 16 32 L 4 32 C 1.791 32 0 30.209 0 28 Z M 0 4 C 0 1.791 1.791 0 4 0 L 16 0 C 18.209 0 20 1.791 20 4 Z M 16 24 C 14.895 24 14 23.105 14 22 L 14 10 C 14 8.895 14.895 8 16 8 C 17.105 8 18 8.895 18 10 L 18 22 C 18 23.105 17.105 24 16 24 Z M 8 24 C 6.895 24 6 23.105 6 22 L 6 10 C 6 8.895 6.895 8 8 8 C 9.105 8 10 8.895 10 10 L 10 22 C 10 23.105 9.105 24 8 24 Z" fill="rgb(0,0,0)"/>
+          <path d="M 8 18 C 6.895 18 6 17.105 6 16 C 6 14.895 6.895 14 8 14 L 16 14 C 17.105 14 18 14.895 18 16 C 18 17.105 17.105 18 16 18 Z" fill="rgb(0,0,0)"/>
+        </svg>
+      </a>
+      <div class="cs-nav-links">
+        <a href="./index.html" class="cs-nav-link">Work</a>
+        <a href="https://framerusercontent.com./assets/Z1bERh9xT0RfSlq8lPXX3Gspy4.pdf" download class="cs-nav-link" style="padding:10px;">Resume</a>
+        <button class="cs-nav-btn" data-email-copy aria-live="polite">Email me</button>
+      </div>
+    </div>
+    <div class="cs-nav-divider"></div>
+  </header>
+
+  <!-- ─── Main content ─────────────────────────────────────────── -->
+  <main class="cs-main">
+
+    <!-- Sticky table of contents -->
+    <nav class="cs-toc" aria-label="Case study sections">
+      <a class="cs-toc-back" href="./index.html">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M6 3L2.5 6.5L6 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2.5 6.5H9.5C11.71 6.5 13.5 8.29 13.5 10.5C13.5 12.71 11.71 14.5 9.5 14.5H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Back</span>
+      </a>
+      <ul class="cs-toc-list">
+        <li><a class="cs-toc-link" href="#overview" data-toc>Overview</a></li>
+        <li><a class="cs-toc-link" href="#context" data-toc>Context</a></li>
+        <li><a class="cs-toc-link" href="#problem" data-toc>Problem</a></li>
+        <li><a class="cs-toc-link" href="#shift" data-toc>The Shift</a></li>
+        <li><a class="cs-toc-link" href="#solution" data-toc>Solution</a></li>
+        <li><a class="cs-toc-link" href="#results" data-toc>Results</a></li>
+        <li><a class="cs-toc-link" href="#decisions" data-toc>Key Decisions</a></li>
+        <li><a class="cs-toc-link" href="#process" data-toc>Process</a></li>
+        <li><a class="cs-toc-link" href="#closing" data-toc>Closing</a></li>
+      </ul>
+    </nav>
+
+    <!-- Hero — white -->
+    <section id="overview" class="cs-band cs-hero">
+      <div class="cs-inner">
+        <p class="cs-eyebrow">Case Study · Internal Tool</p>
+        <h1 class="cs-hero-title">Automating Title Document Retrieval</h1>
+        <p class="cs-hero-deck">A drag-and-drop web app that turns hours of manual link-clicking into a background task — now processing <span class="cs-em">6,000+ documents a month</span> at roughly <span class="cs-em">97% success</span>.</p>
+
+        <div class="cs-meta-grid">
+          <div class="cs-meta-item">
+            <div class="cs-meta-label">Role</div>
+            <div class="cs-meta-value">Sole Designer &amp; Full-Stack Engineer</div>
+          </div>
+          <div class="cs-meta-item">
+            <div class="cs-meta-label">Product</div>
+            <div class="cs-meta-value">Drag-and-drop batch document automation web app</div>
+          </div>
+          <div class="cs-meta-item">
+            <div class="cs-meta-label">Timeline</div>
+            <div class="cs-meta-value">[Add build length and launch year]</div>
+          </div>
+          <div class="cs-meta-item">
+            <div class="cs-meta-label">Stack</div>
+            <div class="cs-meta-value">Vue 3, Vite, Firebase Firestore, Python / Cloud Run, Cloud Tasks</div>
+          </div>
+        </div>
+
+        <!-- ░░ HERO SHOWCASE ░░ Styles: ./assets/css/hero-showcase.css
+             SWITCH VARIANT: change data-variant below to "a", "b", or "c".
+               a = Ken Burns cross-fade stack
+               b = Floating browser mock + parallax chips
+               c = Guided flow walkthrough   (current)
+             Only the active variant renders; delete the other two blocks
+             once you've settled on one for production. -->
+        <div class="hero-showcase" data-variant="c">
+
+          <!-- Variant A — Ken Burns cross-fade stack -->
+          <div class="showcase-a" aria-label="Title Document Extractor — product screenshots">
+            <div class="showcase-a__frame">
+              <div class="showcase-a__slide">
+                <img src="./assets/images/Empty%20state%20—%20redesign@2x.png" width="2880" height="1800"
+                     alt="Title Document Extractor empty state with a drag-and-drop zone" loading="eager" decoding="async">
+              </div>
+              <div class="showcase-a__slide">
+                <img src="./assets/images/Staged%20files%20—%20redesign@2x.png" width="2880" height="1960" alt="" loading="lazy" decoding="async">
+              </div>
+              <div class="showcase-a__slide">
+                <img src="./assets/images/Processing%20—%20redesign@2x.png" width="2880" height="3240" alt="" loading="lazy" decoding="async">
+              </div>
+              <div class="showcase-a__slide">
+                <img src="./assets/images/Issue%20review%20modal%20—%20redesign@2x.png" width="2880" height="1800" alt="" loading="lazy" decoding="async">
+              </div>
+            </div>
+          </div>
+
+          <!-- Variant B — Floating browser mock + parallax chips -->
+          <div class="showcase-b" aria-label="Title Document Extractor product window">
+            <div class="showcase-b__window">
+              <div class="showcase-b__bar" aria-hidden="true">
+                <span class="showcase-b__dot"></span>
+                <span class="showcase-b__dot"></span>
+                <span class="showcase-b__dot"></span>
+                <span class="showcase-b__addr">app.titleextractor — Batch</span>
+              </div>
+              <div class="showcase-b__screen">
+                <img src="./assets/images/Staged%20files%20—%20redesign@2x.png" width="2880" height="1960"
+                     alt="Title Document Extractor with a batch of title PDFs staged for processing" loading="lazy" decoding="async">
+              </div>
+            </div>
+            <div class="showcase-b__chip showcase-b__chip--job" aria-hidden="true">
+              <span class="showcase-b__spin"></span>
+              <span>
+                <span class="showcase-b__chip-t">Exhibit B-4.pdf</span>
+                <span class="showcase-b__chip-s">renaming…</span>
+              </span>
+            </div>
+            <div class="showcase-b__chip showcase-b__chip--prog" aria-hidden="true">
+              <span class="showcase-b__chip-ic">↑</span>
+              <span>
+                <span class="showcase-b__chip-t">9 of 12 done</span>
+                <span class="showcase-b__bar-track"><span class="showcase-b__bar-fill"></span></span>
+              </span>
+            </div>
+            <div class="showcase-b__chip showcase-b__chip--done" aria-hidden="true">
+              <span class="showcase-b__chip-ic">✓</span>
+              <span>
+                <span class="showcase-b__chip-t">ZIP ready</span>
+                <span class="showcase-b__chip-s">renamed · download</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Variant C — Guided flow walkthrough -->
+          <div class="showcase-c" aria-label="Title Document Extractor product walkthrough">
+            <div class="showcase-c__stage">
+              <div class="showcase-c__slide">
+                <img src="./assets/images/Empty%20state%20—%20redesign@2x.png" width="2880" height="1800"
+                     alt="Step 1: empty state drop zone" loading="eager" decoding="async">
+              </div>
+              <div class="showcase-c__slide">
+                <img src="./assets/images/Staged%20files%20—%20redesign@2x.png" width="2880" height="1960" alt="" loading="lazy" decoding="async">
+              </div>
+              <div class="showcase-c__slide">
+                <img src="./assets/images/Processing%20—%20redesign@2x.png" width="2880" height="3240" alt="" loading="lazy" decoding="async">
+              </div>
+              <div class="showcase-c__slide">
+                <img src="./assets/images/Issue%20review%20modal%20—%20redesign@2x.png" width="2880" height="1800" alt="" loading="lazy" decoding="async">
+              </div>
+            </div>
+
+            <div class="showcase-c__cap">
+              <span class="showcase-c__cap-num">FLOW</span>
+              <span class="showcase-c__cap-wrap">
+                <span class="showcase-c__cap-line">Drop a whole batch of title PDFs.</span>
+                <span class="showcase-c__cap-line">Files stage instantly — no waiting on uploads.</span>
+                <span class="showcase-c__cap-line">Each file moves through queued → renaming → done.</span>
+                <span class="showcase-c__cap-line">Anything that fails comes back flagged for review.</span>
+              </span>
+            </div>
+
+            <div class="showcase-c__dots" aria-hidden="true">
+              <span class="showcase-c__dot"></span>
+              <span class="showcase-c__dot"></span>
+              <span class="showcase-c__dot"></span>
+              <span class="showcase-c__dot"></span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Context — white -->
+    <section id="context" class="cs-band">
+      <div class="cs-inner">
+        <p class="cs-eyebrow">01 · Context</p>
+        <h2 class="cs-heading">A due diligence bottleneck hidden in every title</h2>
+        <p class="cs-body">Every commercial property title arrives as a PDF packed with hyperlinks to recorded documents: deeds, easements, plats, tax records. <span class="cs-em">Fifteen employees</span> at our due diligence firm spent hours clicking each link, downloading each file, and renaming it by hand.</p>
+        <p class="cs-body">Our CEO brought the problem to me to automate — leadership had also discussed <span class="cs-em">offshoring the work</span>. I built a drag-and-drop web app that turns an entire portfolio of titles into a background task. It now processes an estimated <span class="cs-em--accent">6,000+ documents a month</span> at roughly <span class="cs-em--accent">97% success</span>.</p>
+      </div>
+    </section>
+
+    <!-- Problems — tint -->
+    <section id="problem" class="cs-band cs-band--tint">
+      <div class="cs-inner">
+        <p class="cs-eyebrow">02 · The Problem</p>
+        <h2 class="cs-heading">Why the manual process didn't scale</h2>
+        <div class="cs-grid-3">
+          <div class="cs-card">
+            <span class="cs-card-chip">01</span>
+            <p class="cs-card-title">Manual Overhead</p>
+            <p class="cs-card-body">A typical title links 10 to 40 documents, and some exceed 100. Each one meant a click, a download, and a wait — repeated across every title.</p>
+          </div>
+          <div class="cs-card">
+            <span class="cs-card-chip">02</span>
+            <p class="cs-card-title">Unusable Files</p>
+            <p class="cs-card-body">Portals downloaded documents with random file names. Staff renamed every file by hand to match its link text so they could find and reference it with clients.</p>
+          </div>
+          <div class="cs-card">
+            <span class="cs-card-chip">03</span>
+            <p class="cs-card-title">No Room to Scale</p>
+            <p class="cs-card-body">Clients often send portfolios of 30 to 90 titles at once. Each portfolio became a whole project for one person.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Before / After — white -->
+    <section id="shift" class="cs-band">
+      <div class="cs-inner">
+        <p class="cs-eyebrow">03 · The Shift</p>
+        <h2 class="cs-heading">Before / After</h2>
+        <p class="cs-lead">The manual loop ran once per document. The new flow runs once per portfolio.</p>
+        <div class="cs-ba-grid">
+
+          <div class="cs-ba-col cs-ba-col--before">
+            <span class="cs-ba-badge">Before</span>
+            <p class="cs-ba-scope">per document</p>
+            <img class="cs-ba-flow" src="./assets/images/BeforeTitle.svg"
+                 alt="Before flow: open title PDF, click link, download file, rename to link text — repeated 10 to 100 times per title."
+                 loading="lazy" decoding="async">
+          </div>
+
+          <div class="cs-ba-col cs-ba-col--after">
+            <span class="cs-ba-badge">After</span>
+            <p class="cs-ba-scope">per portfolio</p>
+            <img class="cs-ba-flow" src="./assets/images/AfterTitle.svg"
+                 alt="After flow: drop all title PDFs, background processing, download renamed ZIP."
+                 loading="lazy" decoding="async">
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Solutions — tint -->
+    <section id="solution" class="cs-band cs-band--tint">
+      <div class="cs-inner">
+        <p class="cs-eyebrow">04 · The Solution</p>
+        <h2 class="cs-heading">What the app does</h2>
+        <p class="cs-lead">Five capabilities turn an unpredictable, portal-by-portal chore into one reliable batch.</p>
+        <div class="cs-solutions-grid">
+          <div class="cs-card">
+            <span class="cs-card-chip">01</span>
+            <p class="cs-card-title">Batch Processing</p>
+            <p class="cs-card-body">Users drop an entire portfolio of title PDFs at once. A queued cloud backend processes them concurrently, so nobody waits on one title before starting the next.</p>
+          </div>
+          <div class="cs-card">
+            <span class="cs-card-chip">02</span>
+            <p class="cs-card-title">Ambient Visibility</p>
+            <p class="cs-card-body">Each file gets a live job card that moves from queued to downloading, renaming, and done. The browser tab title updates with progress too, so users can submit a batch, switch windows, and keep working.</p>
+          </div>
+          <div class="cs-card">
+            <span class="cs-card-chip">03</span>
+            <p class="cs-card-title">Graceful Failure</p>
+            <p class="cs-card-body">When a document can't be retrieved, the rest of the batch still completes. Successful files are available as a ZIP right away. Each failed document is flagged with its reason and a copy of its URL for quick manual follow-up.</p>
+          </div>
+          <div class="cs-card">
+            <span class="cs-card-chip">04</span>
+            <p class="cs-card-title">Resilient Retrieval</p>
+            <p class="cs-card-body">Title companies use many different document portals. The backend tries several download methods, from direct HTTP requests to a headless browser that finds and clicks download buttons. New portals get custom handling as users encounter them.</p>
+          </div>
+          <div class="cs-card">
+            <span class="cs-card-chip">05</span>
+            <p class="cs-card-title">Job History</p>
+            <p class="cs-card-body">Past batches are saved and re-downloadable for 7 days, so a lost ZIP never means reprocessing. Users can revisit any portfolio they've run and pull its files again without re-uploading a single title.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+        <!-- Results — base -->
+        <section id="results" class="cs-band">
+          <div class="cs-inner">
+            <p class="cs-eyebrow">07 · Results</p>
+            <h2 class="cs-heading">What it delivers</h2>
+            <div class="cs-stat-grid">
+              <div class="cs-stat-card">
+                <div class="cs-stat-number"><span class="cs-stat-approx">~</span>6,400</div>
+                <div class="cs-stat-text">
+                  <div class="cs-stat-label">Documents a Month</div>
+                  <div class="cs-stat-desc">Across ~325 titles, retrieved and renamed with no manual clicking.</div>
+                </div>
+              </div>
+              <div class="cs-stat-card">
+                <div class="cs-stat-number"><span class="cs-stat-approx">~</span>97%</div>
+                <div class="cs-stat-text">
+                  <div class="cs-stat-label">Success Rate</div>
+                  <div class="cs-stat-desc">Most incomplete batches miss only one or two documents out of dozens.</div>
+                </div>
+              </div>
+              <div class="cs-stat-card">
+                <div class="cs-stat-number"><span class="cs-stat-approx">~</span>100 hrs</div>
+                <div class="cs-stat-text">
+                  <div class="cs-stat-label">Saved Monthly</div>
+                  <div class="cs-stat-desc">At roughly one minute of manual work per document across a 15-person team.</div>
+                </div>
+              </div>
+              <div class="cs-stat-card">
+                <div class="cs-stat-number"><span class="cs-stat-approx">~</span>38 sec</div>
+                <div class="cs-stat-text">
+                  <div class="cs-stat-label">Per Title (median)</div>
+                  <div class="cs-stat-desc">Largest single title — 103 documents — completed in under two minutes.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+    <!-- Key Design Decisions — dark feature band -->
+    <section id="decisions" class="cs-band cs-band--dark">
+      <div class="cs-inner">
+        <p class="cs-eyebrow">05 · Key Design Decisions</p>
+        <h2 class="cs-heading">Two calls that shaped the product</h2>
+
+        <div class="cs-decisions">
+          <div class="cs-decision">
+            <div class="cs-decision-number">01</div>
+            <div>
+              <h3 class="cs-decision-title">From AI naming to anchor text</h3>
+              <p class="cs-body">The first version used Google's Gemini API to read the first page of each document and generate a descriptive name, such as "Warranty Deed – Parcel 12." It worked, and it shipped.</p>
+              <p class="cs-body">About a month after launch, users asked for something simpler: name each file exactly as its link text reads. <span class="cs-em">The link text is the shared vocabulary between our team and our clients.</span> When a client says "Exhibit B-4," staff need a file called Exhibit B-4, not a smarter label they have to translate.</p>
+              <p class="cs-body"><span class="cs-em">I switched to anchor-text naming. The lesson: the most sophisticated solution isn't always the most useful one.</span> Real usage told me what mattered — consistency with how people already talked about the documents.</p>
+            </div>
+          </div>
+
+          <div class="cs-decision">
+            <div class="cs-decision-number">02</div>
+            <div>
+              <h3 class="cs-decision-title">Designing for failure first</h3>
+              <p class="cs-body">Document links live on dozens of third-party portals I don't control. Links expire, portals change, and some sites block automated access. A tool that failed the whole batch on one bad link would have been worse than the manual process.</p>
+              <p class="cs-body"><span class="cs-em">So I treated failure as a normal outcome rather than an edge case. Every batch returns what it could get immediately. Failures come back with a reason and the original URL. Users only touch the handful of documents that truly need a human. Over time, adding handling for new portals has reduced those failures to a small share per title.</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Process — tint -->
+    <section id="process" class="cs-band cs-band--tint">
+      <div class="cs-inner">
+        <p class="cs-eyebrow">06 · Process</p>
+        <h2 class="cs-heading">How I built it</h2>
+        <p class="cs-lead">As the sole designer and developer, I optimized for getting a working tool into users' hands fast.</p>
+        <div class="cs-process-list">
+          <div class="cs-process-item">
+            <div class="cs-process-num">01</div>
+            <div>
+              <p class="cs-process-item-title">Batch-first scoping</p>
+              <p class="cs-body">Clients send whole portfolios, so I designed for batches from day one instead of retrofitting them onto a single-file tool.</p>
+            </div>
+          </div>
+          <div class="cs-process-item">
+            <div class="cs-process-num">02</div>
+            <div>
+              <p class="cs-process-item-title">Wireframe, then build</p>
+              <p class="cs-body">I wireframed the empty state in Figma to nail the first impression — one clear drop zone — and designed the rest directly in code.</p>
+            </div>
+          </div>
+          <div class="cs-process-item">
+            <div class="cs-process-num">03</div>
+            <div>
+              <p class="cs-process-item-title">Iterate from real usage</p>
+              <p class="cs-body">Post-launch feedback drove the biggest changes, including the switch to anchor-text naming and new handling for each unfamiliar portal users encountered.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+
+    <!-- Closing — tint -->
+    <section id="closing" class="cs-band cs-band--tint">
+      <div class="cs-inner">
+        <p class="cs-eyebrow">Closing</p>
+        <p class="cs-closing-text">This project turned a job the company considered offshoring into a background task. It reinforced a principle I bring to every internal tool: <span class="cs-em--accent">design for how the work actually happens, including when things go wrong. The right answer came from watching real usage, not from the cleverest first idea.</span> </p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─── Footer ──────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="cs-inner site-footer-inner">
+      <div class="site-footer-brand">
+        <a href="./index.html" class="cs-nav-logo" aria-label="Home">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32" aria-hidden="true">
+            <path d="M 0 4 C 0 1.791 1.791 0 4 0 L 4 32 C 1.791 32 0 30.209 0 28 Z"/>
+            <path d="M 0 28 L 20 28 C 20 30.209 18.209 32 16 32 L 4 32 C 1.791 32 0 30.209 0 28 Z M 0 4 C 0 1.791 1.791 0 4 0 L 16 0 C 18.209 0 20 1.791 20 4 Z M 16 24 C 14.895 24 14 23.105 14 22 L 14 10 C 14 8.895 14.895 8 16 8 C 17.105 8 18 8.895 18 10 L 18 22 C 18 23.105 17.105 24 16 24 Z M 8 24 C 6.895 24 6 23.105 6 22 L 6 10 C 6 8.895 6.895 8 8 8 C 9.105 8 10 8.895 10 10 L 10 22 C 10 23.105 9.105 24 8 24 Z"/>
+            <path d="M 8 18 C 6.895 18 6 17.105 6 16 C 6 14.895 6.895 14 8 14 L 16 14 C 17.105 14 18 14.895 18 16 C 18 17.105 17.105 18 16 18 Z"/>
+          </svg>
+        </a>
+        <p class="site-footer-tagline">Building tools that drive results.</p>
+      </div>
+      <div class="site-footer-cols">
+        <div class="site-footer-col">
+          <h4>Work</h4>
+          <a href="./casestudy-page.html">Zoning</a>
+          <a href="./casestudy-title-extraction.html">Title Extractor</a>
+        </div>
+        <div class="site-footer-col">
+          <h4>My Info</h4>
+          <a href="https://framerusercontent.com./assets/Z1bERh9xT0RfSlq8lPXX3Gspy4.pdf" download>Resume</a>
+          <a data-email-copy>Contact Me</a>
+        </div>
+      </div>
+    </div>
+    <div class="cs-inner site-footer-bottom">
+      <span>© 2026 Christian Hernandez</span>
+    </div>
+  </footer>
+
+  <script src="./assets/js/site.js"></script>
+</body>
+</html>

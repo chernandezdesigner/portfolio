@@ -1,0 +1,403 @@
+/* ============================================================
+   site.css — shared base for all pages (no framework)
+   Tokens · reset · typography · nav · footer · layout helpers
+   ============================================================ */
+
+/* ─── Fonts (local Poppins + Inter) ──────────────────────────── */
+@font-face { font-family: "Poppins"; src: url("/assets/fonts/JMWNCAGBH3TLANIVQPVABVAVNV5QERTH-6d2cb097.woff2"); font-display: swap; font-style: normal; font-weight: 400 }
+@font-face { font-family: "Poppins"; src: url("/assets/fonts/UCDYLFFGLZRGCFY5GYDYM5LDB52BAR5M-ba81eacf.woff2"); font-display: swap; font-style: normal; font-weight: 500 }
+@font-face { font-family: "Poppins"; src: url("/assets/fonts/24R4YOH3G2SFDSTCNHOVGYEX3DMRC3CE-22d9a39f.woff2"); font-display: swap; font-style: normal; font-weight: 600 }
+@font-face { font-family: "Poppins"; src: url("/assets/fonts/FYG6OCH7XOLUUSZTIZE65ATBZWF623O4-887d8f2f.woff2"); font-display: swap; font-style: normal; font-weight: 700 }
+@font-face { font-family: "Inter"; src: url("/assets/fonts/UjlFhCnUjxhNfep4oYBPqnEssyo-5a028a33.woff2"); font-display: swap; font-style: normal; font-weight: 500 }
+@font-face { font-family: "Poppins Placeholder"; src: local("Arial"); ascent-override: 91.95%; descent-override: 30.94%; line-gap-override: 7.96%; size-adjust: 113.11% }
+@font-face { font-family: "Inter Placeholder"; src: local("Arial"); ascent-override: 89.79%; descent-override: 22.36%; line-gap-override: 0.00%; size-adjust: 107.89% }
+
+/* ─── Design tokens ──────────────────────────────────────────── */
+:root {
+  /* Spacing — 8pt scale */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-12: 48px;
+  --s-16: 64px;
+  --s-24: 96px;
+  --s-32: 128px;
+  --s-40: 160px;
+  --s-48: 192px; 
+
+  /* Ink */
+  --ink: rgba(0, 0, 0, 0.92);
+  --ink-2: rgba(0, 0, 0, 0.72);
+  --ink-3: rgba(0, 0, 0, 0.5);
+
+  /* Accent */
+  --accent: rgb(0, 153, 255);
+  --accent-ink: rgb(0, 110, 200);
+  --accent-tint: rgba(0, 153, 255, 0.08);
+
+  /* Surfaces */
+  --surface: #f5f7fa;
+  --surface-card: #ffffff;
+  --ink-band: #0e0e10;
+  --on-dark: rgba(255, 255, 255, 0.92);
+  --on-dark-2: rgba(255, 255, 255, 0.64);
+
+  /* Lines */
+  --line: rgba(0, 0, 0, 0.1);
+  --line-dark: rgba(255, 255, 255, 0.14);
+
+  /* Radius */
+  --r: 16px;
+  --r-sm: 10px;
+
+  /* Type */
+  --measure: 68ch;
+}
+
+/* ─── Reset ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { background: #ffffff; }
+
+body {
+  font-family: "Poppins", "Poppins Placeholder", sans-serif;
+  background: #ffffff;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+img { display: block; max-width: 100%; }
+
+/* ─── Navigation ─────────────────────────────────────────────── */
+.cs-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.cs-nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 94px;
+  padding-right: 94px;
+  height: 72px;
+}
+
+.cs-nav-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.cs-nav-logo svg { width: 20px; height: 32px; }
+
+.cs-nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.cs-nav-link {
+  font-family: "Inter", "Inter Placeholder", sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 2em;
+  color: rgb(102, 102, 102);
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 50px;
+  transition: color 0.15s;
+}
+
+.cs-nav-link:hover { color: var(--ink); }
+
+.cs-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  background: rgb(0, 0, 0);
+  color: #ffffff;
+  font-family: "Poppins", "Poppins Placeholder", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  border: none;
+  border-radius: 64px;
+  padding: 10px 20px;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+.cs-nav-btn:hover { opacity: 0.85; }
+
+
+
+/* ─── Layout helpers ─────────────────────────────────────────── */
+.cs-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 80px;
+}
+
+.cs-band {
+  width: 100%;
+  padding: var(--s-24) 0;
+}
+
+.cs-band--tint { background: var(--surface); }
+
+.cs-band--dark {
+  background: var(--ink-band);
+  color: var(--on-dark);
+}
+
+/* ─── Shared section / text helpers ──────────────────────────── */
+.cs-eyebrow {
+  font-family: "Inter", "Inter Placeholder", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  margin-bottom: var(--s-3);
+}
+
+.cs-band--dark .cs-eyebrow { color: var(--accent); }
+
+.cs-heading {
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: var(--s-6);
+}
+
+.cs-band--dark .cs-heading { color: var(--on-dark); }
+
+.cs-lead {
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ink);
+  max-width: var(--measure);
+  margin-bottom: var(--s-8);
+}
+
+.cs-body {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--ink-2);
+  max-width: var(--measure);
+}
+
+.cs-body + .cs-body { margin-top: var(--s-4); }
+
+.cs-em { font-weight: 600; color: var(--ink); }
+.cs-em--accent { font-weight: 600; color: var(--accent-ink); }
+
+/* ─── Image placeholder frame ────────────────────────────────── */
+.cs-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--surface);
+  border: 1.5px dashed var(--line);
+  border-radius: var(--r);
+  color: var(--ink-3);
+  font-family: "Inter", "Inter Placeholder", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-align: center;
+  padding: var(--s-6);
+}
+
+/* ─── Footer ─────────────────────────────────────────────────── */
+.site-footer {
+  background: var(--ink-band);
+  color: var(--on-dark);
+  border-top: 1px solid var(--line-dark);
+}
+
+.site-footer-inner {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-12);
+  padding-top: var(--s-32);
+  padding-bottom: var(--s-16);
+}
+
+.site-footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  max-width: 320px;
+}
+
+.site-footer-brand .cs-nav-logo svg path { fill: #ffffff; }
+
+.site-footer-tagline {
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--on-dark-2);
+}
+
+.site-footer-cols {
+  display: flex;
+  gap: var(--s-16);
+}
+
+.site-footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.site-footer-col h4 {
+  font-family: "Inter", "Inter Placeholder", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--on-dark-2);
+  margin-bottom: var(--s-1);
+}
+
+.site-footer-col a {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--on-dark);
+  text-decoration: none;
+  transition: opacity 0.15s;
+  cursor: pointer;
+}
+
+.site-footer-col a:hover { opacity: 0.7; }
+
+.site-footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--s-8);
+  padding-bottom: var(--s-8);
+  border-top: 1px solid var(--line-dark);
+  font-size: 14px;
+  color: var(--on-dark-2);
+}
+
+/* ─── Case-study sticky table of contents ────────────────────── */
+/* Hidden by default (mobile / tablet); revealed once there is room. */
+.cs-toc { display: none; }
+
+.cs-toc-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-family: "Inter", "Inter Placeholder", sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink-3);
+  text-decoration: none;
+  padding-left: 16px;
+  margin-bottom: var(--s-8);
+  transition: color 0.15s ease;
+}
+
+.cs-toc-back:hover { color: var(--ink); }
+.cs-toc-back svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+.cs-toc-list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+.cs-toc-link {
+  display: block;
+  font-family: "Inter", "Inter Placeholder", sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--ink-3);
+  text-decoration: none;
+  padding: 7px 0 7px 14px;
+  border-left: 2px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.cs-toc-link:hover { color: var(--ink-2); }
+
+.cs-toc-link.is-active {
+  color: var(--ink);
+  font-weight: 600;
+  border-left-color: var(--accent);
+}
+
+/* Anchor targets clear the sticky nav when jumped to. */
+.cs-main section[id] { scroll-margin-top: 96px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+@media (min-width: 1100px) {
+  /* Reserve a left column inside the content measure for the TOC. */
+  .cs-main .cs-inner {
+    max-width: 1200px;
+    padding-left: 300px;
+    padding-right: 80px;
+  }
+
+  .cs-toc {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 128px;
+    left: max(40px, calc((100vw - 1200px) / 2 + 40px));
+    width: 220px;
+    z-index: 50;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+  }
+
+  /* Faded out once the footer scrolls into view. */
+  .cs-toc--hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* ─── Responsive — tablet (≤1199.98px) ───────────────────────── */
+@media (max-width: 1199.98px) {
+  .cs-band { padding: var(--s-16) 0; }
+  .cs-inner { padding: 0 48px; }
+}
+
+/* ─── Responsive — mobile (≤809.98px) ────────────────────────── */
+@media (max-width: 809.98px) {
+  .cs-band { padding: var(--s-12) 0; }
+  .cs-inner { padding: 0 24px; }
+  .cs-nav-inner { padding: 0 24px; }
+  .cs-nav-link { display: none; }
+
+  .cs-heading { font-size: 26px; }
+  .cs-lead { font-size: 19px; }
+
+  .site-footer-inner { flex-direction: column; gap: var(--s-8); padding-top: var(--s-24); padding-bottom: var(--s-12); }
+  .site-footer-cols { gap: var(--s-12); }
+}

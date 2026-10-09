@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1200">
+  <title>Zoning Compliance Reporting — Christian Hernandez</title>
+  <meta name="description" content="Reimagined Zoning Compliance Reporting — a multi-step form SaaS that replaced error-prone Word templates and reached 100% adoption.">
+  <link rel="icon" type="image/svg+xml" href="./assets/images/favicon.svg">
+  <link rel="stylesheet" href="./assets/css/site.css">
+
+  <style>
+    /* ─── Dark mode design system (matches home / index.html) ─── */
+    :root {
+      /* Ink flips to white-on-dark */
+      --ink: rgba(255, 255, 255, 0.92);
+      --ink-2: rgba(255, 255, 255, 0.72);
+      --ink-3: rgba(255, 255, 255, 0.5);
+
+      /* Warm gold accent pulled from the hero shader (colorB) */
+      --accent: #d5aa0d;
+      --accent-ink: #d5aa0d;
+      --accent-tint: rgba(213, 170, 13, 0.14);
+
+      /* Dark surfaces */
+      --surface: #141418;
+      --surface-card: #15151a;
+
+      /* Hairlines become faint light lines on dark */
+      --line: rgba(255, 255, 255, 0.12);
+    }
+
+    html, body { background: #0e0e10; }
+
+    /* Nav — dark glass bar, matching the home design system */
+    .cs-nav {
+      background: rgba(14, 14, 16, 0.6);
+    }
+    .cs-nav-logo svg path { fill: #ffffff; }
+    .cs-nav-link { color: #ece7ff; }
+    .cs-nav-link:hover { color: #ffffff; }
+    .cs-nav-btn { background: #d5aa0d; color: #1a1509; }
+    .cs-nav-divider { height: 1px; background: var(--line-dark); }
+
+    /* ─── Page sections ──────────────────────────────────────── */
+    /* Alternating tint bands break up the sections instead of hairlines */
+    .cs-section { padding: var(--s-16) 0; }
+    .cs-hero { padding: var(--s-16) 0 var(--s-12); }
+
+    .cs-hero-title {
+      font-size: 48px;
+      font-weight: 500;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      max-width: 20ch;
+      margin-bottom: var(--s-8);
+    }
+
+    /* Meta row */
+    .cs-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s-8) var(--s-6);
+      margin-bottom: var(--s-12);
+    }
+
+    .cs-meta-label {
+      font-family: "Inter", "Inter Placeholder", sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: var(--s-2);
+    }
+
+    .cs-meta-value { font-size: 18px; font-weight: 500; color: var(--ink); line-height: 1.4; }
+
+    /* Cards */
+    .cs-card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s-6);
+      margin-top: var(--s-8);
+    }
+
+    .cs-card {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-3);
+      padding: var(--s-8);
+      background: var(--surface-card);
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .cs-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(213, 170, 13, 0.5);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    }
+
+    .cs-card-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: var(--r-sm);
+      background: var(--accent-tint);
+      color: var(--accent-ink);
+      font-family: "Inter", "Inter Placeholder", sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: var(--s-2);
+    }
+
+    .cs-card-title { font-size: 19px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+    .cs-card-body { font-size: 16px; font-weight: 400; line-height: 1.55; color: var(--ink-2); }
+
+    .cs-card-media {
+      width: 100%;
+      max-width: 180px;
+      height: auto;
+      display: block;
+    }
+
+    .cs-card--center {
+      align-items: center;
+      text-align: center;
+    }
+
+    .cs-card--center .cs-card-title,
+    .cs-card--center .cs-card-body {
+      text-align: center;
+    }
+
+    /* Process list */
+    .cs-process-list { display: flex; flex-direction: column; gap: var(--s-8); margin-top: var(--s-8); }
+
+    .cs-process-item { display: grid; grid-template-columns: 40px 1fr; gap: var(--s-6); align-items: start; }
+
+    .cs-process-num {
+      font-family: "Inter", "Inter Placeholder", sans-serif;
+      font-size: 15px; font-weight: 600; color: var(--accent-ink); padding-top: 2px;
+    }
+
+    .cs-process-item-title { font-size: 20px; font-weight: 600; color: var(--ink); margin-bottom: var(--s-2); }
+
+    /* Results stats */
+    .cs-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-6); margin-top: var(--s-8); }
+
+    .cs-stat-card { padding: var(--s-8); background: var(--surface-card); border: 1px solid var(--line); border-radius: var(--r); }
+
+    .cs-stat-number { font-size: 48px; font-weight: 600; line-height: 1; letter-spacing: -0.03em; color: var(--accent-ink); margin-bottom: var(--s-3); }
+    .cs-stat-label { font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: var(--s-2); line-height: 1.3; }
+    .cs-stat-desc { font-size: 14px; font-weight: 400; color: var(--ink-3); line-height: 1.45; }
+
+    .cs-hero-frame {
+      margin-top: var(--s-4);
+      overflow: hidden;
+      border-radius: var(--r);
+      background: var(--surface-card);
+      border: 1px solid var(--line);
+    }
+
+    .cs-hero-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .cs-closing-text { font-size: 26px; font-weight: 400; line-height: 1.45; color: var(--ink); max-width: var(--measure); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cs-card { transition: none; }
+      .cs-card:hover { transform: none; }
+    }
+
+    @media (max-width: 1199.98px) {
+      .cs-hero-title { font-size: 40px; }
+      .cs-meta-grid { grid-template-columns: repeat(3, 1fr); }
+      .cs-card-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 809.98px) {
+      .cs-hero-title { font-size: 32px; }
+      .cs-meta-grid { grid-template-columns: 1fr; }
+      .cs-card-grid { grid-template-columns: 1fr; }
+      .cs-stat-grid { grid-template-columns: 1fr; }
+      .cs-closing-text { font-size: 21px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ─── Navigation ──────────────────────────────────────────── -->
+  <header class="cs-nav">
+    <div class="cs-nav-inner">
+      <a href="./index.html" class="cs-nav-logo" aria-label="Home">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32" aria-hidden="true">
+          <path d="M 0 4 C 0 1.791 1.791 0 4 0 L 4 32 C 1.791 32 0 30.209 0 28 Z" fill="rgb(0,0,0)"/>
+          <path d="M 0 28 L 20 28 C 20 30.209 18.209 32 16 32 L 4 32 C 1.791 32 0 30.209 0 28 Z M 0 4 C 0 1.791 1.791 0 4 0 L 16 0 C 18.209 0 20 1.791 20 4 Z M 16 24 C 14.895 24 14 23.105 14 22 L 14 10 C 14 8.895 14.895 8 16 8 C 17.105 8 18 8.895 18 10 L 18 22 C 18 23.105 17.105 24 16 24 Z M 8 24 C 6.895 24 6 23.105 6 22 L 6 10 C 6 8.895 6.895 8 8 8 C 9.105 8 10 8.895 10 10 L 10 22 C 10 23.105 9.105 24 8 24 Z" fill="rgb(0,0,0)"/>
+          <path d="M 8 18 C 6.895 18 6 17.105 6 16 C 6 14.895 6.895 14 8 14 L 16 14 C 17.105 14 18 14.895 18 16 C 18 17.105 17.105 18 16 18 Z" fill="rgb(0,0,0)"/>
+        </svg>
+      </a>
+      <div class="cs-nav-links">
+        <a href="./index.html" class="cs-nav-link">Work</a>
+        <a href="https://framerusercontent.com./assets/Z1bERh9xT0RfSlq8lPXX3Gspy4.pdf" download class="cs-nav-link" style="padding:10px;">Resume</a>
+        <button class="cs-nav-btn" data-email-copy aria-live="polite">Email me</button>
+      </div>
+    </div>
+    <div class="cs-nav-divider"></div>
+  </header>
+
+  <main class="cs-main">
+
+    <!-- Sticky table of contents -->
+    <nav class="cs-toc" aria-label="Case study sections">
+      <a class="cs-toc-back" href="./index.html">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M6 3L2.5 6.5L6 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2.5 6.5H9.5C11.71 6.5 13.5 8.29 13.5 10.5C13.5 12.71 11.71 14.5 9.5 14.5H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Back</span>
+      </a>
+      <ul class="cs-toc-list">
+        <li><a class="cs-toc-link" href="#overview" data-toc>Overview</a></li>
+        <li><a class="cs-toc-link" href="#context" data-toc>Context</a></li>
+        <li><a class="cs-toc-link" href="#problem" data-toc>Problem</a></li>
+        <li><a class="cs-toc-link" href="#solution" data-toc>Solution</a></li>
+        <li><a class="cs-toc-link" href="#process" data-toc>Process</a></li>
+        <li><a class="cs-toc-link" href="#results" data-toc>Results</a></li>
+        <li><a class="cs-toc-link" href="#closing" data-toc>Closing</a></li>
+      </ul>
+    </nav>
+
+    <!-- Hero -->
+    <section id="overview" class="cs-band cs-hero">
+      <div class="cs-inner">
+        <p class="cs-eyebrow">Case Study · Enterprise SaaS</p>
+        <h1 class="cs-hero-title">Reimagined Zoning Compliance Reporting</h1>
+
+        <div class="cs-meta-grid">
+          <div class="cs-meta-item">
+            <div class="cs-meta-label">Role</div>
+            <div class="cs-meta-value">Sole Designer &amp; Full-Stack Engineer</div>
+          </div>
+          <div class="cs-meta-item">
+            <div class="cs-meta-label">Product</div>
+            <div class="cs-meta-value">Multi-step form web app for enterprise report generation</div>
+          </div>
+          <div class="cs-meta-item">
+            <div class="cs-meta-label">Timeline</div>
+            <div class="cs-meta-value">6 months (2025)</div>
+          </div>
+        </div>
+
+        <div class="cs-hero-frame">
+          <img src="./assets/images/CaseStudyCover.png" width="2880" height="2048"
+               alt="Zoning report builder beside a generated zoning report for Valwood Business Center 8">
+        </div>
+      </div>
+    </section>
+
+    <!-- Context -->
+    <section id="context" class="cs-band cs-section">
+      <div class="cs-inner">
+        <p class="cs-eyebrow">Context</p>
+        <h2 class="cs-heading">From error-prone Word templates to an intelligent SaaS</h2>
+        <p class="cs-body">When report writers spend <span class="cs-em">20–30 minutes per report</span> fixing repetitive data-entry errors, that's not just a workflow problem — it's thousands of lost hours annually. As the sole designer-developer at a real estate due diligence firm, I transformed our zoning compliance process from error-prone 20+ page Word templates into an intelligent SaaS solution that achieved <span class="cs-em--accent">100% adoption</span>.</p>
+      </div>
+    </section>
+
+    <!-- Problems -->
+    <section id="problem" class="cs-band cs-band--tint cs-section">
+      <div class="cs-inner">
+        <p class="cs-eyebrow">The Problem</p>
+        <h2 class="cs-heading">Problems we are solving for</h2>
+        <div class="cs-card-grid">
+          <div class="cs-card cs-card--center">
+            <img class="cs-card-media" src="./assets/images/Forms-bro (1).svg" alt="" width="180" height="180">
+            <p class="cs-card-title">Manual Overhead</p>
+            <p class="cs-card-body">The workflow required extensive data entry across 12 standardized sections, often involving repetitive input for nearly 100 fields.</p>
+          </div>
+          <div class="cs-card cs-card--center">
+            <img class="cs-card-media" src="./assets/images/Work time-bro (1).svg" alt="" width="180" height="180">
+            <p class="cs-card-title">Time Waste</p>
+            <p class="cs-card-body">Report writers wasted 20–30 minutes per report managing human errors and fixing repetitive data entry.</p>
+          </div>
+          <div class="cs-card cs-card--center">
+            <img class="cs-card-media" src="./assets/images/Miscommunication-bro (1).svg" alt="" width="180" height="180">
+            <p class="cs-card-title">Lack of Standardization</p>
+            <p class="cs-card-body">Inconsistent terminology and unit measurements (e.g., "15 feet," "15 ft") added unnecessary complexity and reduced overall report quality.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Solutions -->
+    <section id="solution" class="cs-band cs-section">
+      <div class="cs-inner">
+        <p class="cs-eyebrow">The Solution</p>
+        <h2 class="cs-heading">Solutions</h2>
+        <div class="cs-card-grid">
+          <div class="cs-card">
+            <span class="cs-card-chip">01</span>
+            <p class="cs-card-title">Strategic Alignment</p>
+            <p class="cs-card-body">I reframed the tool as a "TurboTax for zoning reports" to resonate with stakeholders, emphasizing the value of a guided, error-resistant workflow.</p>
+          </div>
+          <div class="cs-card">
+            <span class="cs-card-chip">02</span>
+            <p class="cs-card-title">Standardization</p>
+            <p class="cs-card-body">Automated units of measurement and implemented complex conditional statements to guide users through diverse report scenarios and maintain standardization.</p>
+          </div>
+          <div class="cs-card">
+            <span class="cs-card-chip">03</span>
+            <p class="cs-card-title">Reliable Formatting</p>
+            <p class="cs-card-body">Created complex Word and PDF template files to ensure consistency in spacing, layout, and typography across many scenarios and types of reports.</p>
+          </div>
+          <div class="cs-card">
+            <span class="cs-card-chip">04</span>
+            <p class="cs-card-title">Automation</p>
+            <p class="cs-card-body">Built Node.js cloud functions that query their legacy SQL database to draft the majority of a report, so users no longer type out roughly 30% of the data.</p>
+          </div>
+          <div class="cs-card">
+            <span class="cs-card-chip">05</span>
+            <p class="cs-card-title">Dynamic Logic</p>
+            <p class="cs-card-body">Leveraging Vue 3 reactive components, the form adjusted inputs dynamically based on prior answers, significantly streamlining the user journey and reducing cognitive load.</p>
+          </div>
+          <div class="cs-card">
+            <span class="cs-card-chip">06</span>
+            <p class="cs-card-title">Project Management</p>
+            <p class="cs-card-body">Made the iterative zoning reporting process across a property's phases easier to manage and edit as new data comes in, streamlining the reporting life cycle.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Process -->
+    <section id="process" class="cs-band cs-band--tint cs-section">
+      <div class="cs-inner">
+        <p class="cs-eyebrow">Process</p>
+        <h2 class="cs-heading">How I built it</h2>
+        <p class="cs-lead">As the sole designer and developer, I executed a lean methodology focused on rapid iteration.</p>
+        <div class="cs-process-list">
+          <div class="cs-process-item">
+            <div class="cs-process-num">01</div>
+            <div>
+              <p class="cs-process-item-title">Lean Discovery</p>
+              <p class="cs-body">Due to limited access, I reverse-engineered requirements by auditing over 50 historical reports and collaborated daily with the Head of Zoning to tailor the solution.</p>
+            </div>
+          </div>
+          <div class="cs-process-item">
+            <div class="cs-process-num">02</div>
+            <div>
+              <p class="cs-process-item-title">Prototyping</p>
+              <p class="cs-body">I used a tiered-fidelity approach (Lo-Fi Figma → Hi-Fi ProtoPie) to map form logic and secured stakeholder alignment by providing working prototypes rather than static mockups.</p>
+            </div>
+          </div>
+          <div class="cs-process-item">
+            <div class="cs-process-num">03</div>
+            <div>
+              <p class="cs-process-item-title">Agile Iteration</p>
+              <p class="cs-body">With little user access before building, I knew the real answers would come from post-launch feedback — so my focus was shipping a working MVP as quickly as possible, then iterating.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section id="results" class="cs-band cs-section">
+      <div class="cs-inner">
+        <p class="cs-eyebrow">Results</p>
+        <h2 class="cs-heading">What it delivered</h2>
+        <div class="cs-stat-grid">
+          <div class="cs-stat-card">
+            <div class="cs-stat-number">100%</div>
+            <div class="cs-stat-label">Adoption</div>
+            <div class="cs-stat-desc">Completely replaced Microsoft Word with our custom solution.</div>
+          </div>
+          <div class="cs-stat-card">
+            <div class="cs-stat-number">~20 min</div>
+            <div class="cs-stat-label">Saved per Report</div>
+            <div class="cs-stat-desc">Average time saved on every report versus the manual Word process.</div>
+          </div>
+          <div class="cs-stat-card">
+            <div class="cs-stat-number">Dept-wide</div>
+            <div class="cs-stat-label">Standardization</div>
+            <div class="cs-stat-desc">Standardized reporting language and formatting across the department.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Closing -->
+    <section id="closing" class="cs-band cs-band--tint cs-section">
+      <div class="cs-inner">
+        <p class="cs-eyebrow">Closing Statement</p>
+        <p class="cs-closing-text">Beyond the metrics, this project sparked a cultural shift toward digital-first approaches in a traditionally paper-based department and industry, paving the way for future innovations.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─── Footer ──────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="cs-inner site-footer-inner">
+      <div class="site-footer-brand">
+        <a href="./index.html" class="cs-nav-logo" aria-label="Home">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 32" aria-hidden="true">
+            <path d="M 0 4 C 0 1.791 1.791 0 4 0 L 4 32 C 1.791 32 0 30.209 0 28 Z"/>
+            <path d="M 0 28 L 20 28 C 20 30.209 18.209 32 16 32 L 4 32 C 1.791 32 0 30.209 0 28 Z M 0 4 C 0 1.791 1.791 0 4 0 L 16 0 C 18.209 0 20 1.791 20 4 Z M 16 24 C 14.895 24 14 23.105 14 22 L 14 10 C 14 8.895 14.895 8 16 8 C 17.105 8 18 8.895 18 10 L 18 22 C 18 23.105 17.105 24 16 24 Z M 8 24 C 6.895 24 6 23.105 6 22 L 6 10 C 6 8.895 6.895 8 8 8 C 9.105 8 10 8.895 10 10 L 10 22 C 10 23.105 9.105 24 8 24 Z"/>
+            <path d="M 8 18 C 6.895 18 6 17.105 6 16 C 6 14.895 6.895 14 8 14 L 16 14 C 17.105 14 18 14.895 18 16 C 18 17.105 17.105 18 16 18 Z"/>
+          </svg>
+        </a>
+        <p class="site-footer-tagline">Building tools that drive results.</p>
+      </div>
+      <div class="site-footer-cols">
+        <div class="site-footer-col">
+          <h4>Work</h4>
+          <a href="./casestudy-page.html">Zoning</a>
+          <a href="./casestudy-title-extraction.html">Title Extractor</a>
+        </div>
+        <div class="site-footer-col">
+          <h4>My Info</h4>
+          <a href="https://framerusercontent.com./assets/Z1bERh9xT0RfSlq8lPXX3Gspy4.pdf" download>Resume</a>
+          <a data-email-copy>Contact Me</a>
+        </div>
+      </div>
+    </div>
+    <div class="cs-inner site-footer-bottom">
+      <span>© 2026 Christian Hernandez</span>
+    </div>
+  </footer>
+
+  <script src="./assets/js/site.js"></script>
+</body>
+</html>
