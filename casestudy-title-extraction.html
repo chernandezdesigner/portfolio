@@ -2,7 +2,7 @@
 <html dir="ltr" lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=1200">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Title Document Extractor — Christian Hernandez</title>
   <meta name="description" content="Automating Title Document Retrieval — a drag-and-drop batch document automation web app processing 6,000+ documents a month.">
   <link rel="icon" type="image/svg+xml" href="./assets/images/favicon.svg">
@@ -271,7 +271,7 @@
     .cs-hero { padding-top: var(--s-16); }
 
     .cs-hero-title {
-      font-size: 56px;
+      font-size: clamp(34px, 5.5vw, 56px);
       font-weight: 500;
       line-height: 1.1;
       letter-spacing: -0.02em;
@@ -444,7 +444,7 @@
 
     .cs-decision-number {
       font-family: "Poppins", "Poppins Placeholder", sans-serif;
-      font-size: 88px;
+      font-size: clamp(56px, 9vw, 88px);
       font-weight: 600;
       line-height: 1;
       letter-spacing: -0.03em;
@@ -509,7 +509,7 @@
     }
 
     .cs-stat-number {
-      font-size: 52px;
+      font-size: clamp(40px, 5.5vw, 52px);
       font-weight: 600;
       line-height: 1;
       letter-spacing: -0.03em;
@@ -549,7 +549,7 @@
 
     /* ─── Closing ────────────────────────────────────────────── */
     .cs-closing-text {
-      font-size: 28px;
+      font-size: clamp(22px, 2.8vw, 28px);
       font-weight: 400;
       line-height: 1.45;
       color: var(--ink);
@@ -567,8 +567,6 @@
       .cs-band { padding: var(--s-16) 0; }
       .cs-inner { padding-left: 48px; padding-right: 48px; }
 
-      .cs-hero-title { font-size: 44px; }
-
       .cs-meta-grid { grid-template-columns: repeat(2, 1fr); }
 
       .cs-solutions-grid { grid-template-columns: repeat(2, 1fr); gap: var(--s-6); }
@@ -583,9 +581,7 @@
       .cs-inner { padding-left: 24px; padding-right: 24px; }
       .cs-nav-inner { padding: 0 24px; }
 
-      .cs-hero-title { font-size: 34px; }
       .cs-hero-deck { font-size: 19px; }
-      .cs-heading { font-size: 26px; }
       .cs-lead { font-size: 19px; }
 
       .cs-meta-grid { grid-template-columns: 1fr 1fr; gap: var(--s-6); }
@@ -593,7 +589,6 @@
       .cs-solutions-grid { grid-template-columns: 1fr; }
 
       .cs-stat-grid { grid-template-columns: 1fr; }
-      .cs-stat-number { font-size: 44px; }
 
       .cs-ba-grid { grid-template-columns: 1fr; }
       .cs-ba-col { padding: var(--s-8); }
@@ -603,11 +598,6 @@
       }
 
       .cs-decision { grid-template-columns: 1fr; gap: var(--s-3); }
-      .cs-decision-number { font-size: 64px; }
-
-      .cs-closing-text { font-size: 22px; }
-
-      .cs-nav-link { display: none; }
     }
   </style>
 </head>
@@ -624,11 +614,14 @@
           <path d="M 8 18 C 6.895 18 6 17.105 6 16 C 6 14.895 6.895 14 8 14 L 16 14 C 17.105 14 18 14.895 18 16 C 18 17.105 17.105 18 16 18 Z" fill="rgb(0,0,0)"/>
         </svg>
       </a>
-      <div class="cs-nav-links">
+      <div class="cs-nav-links" id="nav-links">
         <a href="./index.html" class="cs-nav-link">Work</a>
         <a href="./assets/Christian-Hernandez-Resume-UX-Design-Engineer.pdf" download class="cs-nav-link" style="padding:10px;">Resume</a>
         <button class="cs-nav-btn" data-email-copy aria-live="polite">Email me</button>
       </div>
+      <button class="cs-nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
     </div>
     <div class="cs-nav-divider"></div>
   </header>

@@ -58,9 +58,43 @@
     window.addEventListener("resize", update);
   }
 
+  /* Mobile hamburger nav: toggle the dropdown panel open/closed.
+     Shared across every page — each nav has a .cs-nav-toggle button
+     and its links live in .cs-nav-links inside the same .cs-nav. */
+  function initNav() {
+    var toggles = document.querySelectorAll(".cs-nav-toggle");
+    for (var i = 0; i < toggles.length; i++) {
+      (function (toggle) {
+        var nav = toggle.closest(".cs-nav");
+        if (!nav) return;
+
+        function setOpen(open) {
+          nav.classList.toggle("is-open", open);
+          toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        }
+
+        toggle.addEventListener("click", function () {
+          setOpen(!nav.classList.contains("is-open"));
+        });
+
+        /* Close when a link is tapped (buttons like "Email me" stay open
+           so their "Copied!" feedback remains visible). */
+        var links = nav.querySelectorAll(".cs-nav-links a");
+        for (var j = 0; j < links.length; j++) {
+          links[j].addEventListener("click", function () { setOpen(false); });
+        }
+
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") setOpen(false);
+        });
+      })(toggles[i]);
+    }
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     var nodes = document.querySelectorAll("[data-email-copy]");
     for (var i = 0; i < nodes.length; i++) wire(nodes[i]);
     initToc();
+    initNav();
   });
 })();

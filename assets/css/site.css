@@ -60,7 +60,9 @@
 /* ─── Reset ──────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { background: #ffffff; }
+/* overflow-x: clip (not hidden) guards against stray horizontal scroll
+   without creating a scroll container that would break the sticky nav. */
+html { background: #ffffff; overflow-x: clip; }
 
 body {
   font-family: "Poppins", "Poppins Placeholder", sans-serif;
@@ -142,6 +144,38 @@ img { display: block; max-width: 100%; }
 
 .cs-nav-btn:hover { opacity: 0.85; }
 
+/* ─── Mobile menu toggle (hamburger) ─────────────────────────── */
+/* Hidden on desktop; revealed at the mobile breakpoint below. The
+   three bars read light because every nav bar is dark glass. */
+.cs-nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 11px;
+  margin: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.cs-nav-toggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: #ece7ff;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Collapse into an "X" when the menu is open */
+.cs-nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.cs-nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.cs-nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
 
 
 /* ─── Layout helpers ─────────────────────────────────────────── */
@@ -177,7 +211,7 @@ img { display: block; max-width: 100%; }
 .cs-band--dark .cs-eyebrow { color: var(--accent); }
 
 .cs-heading {
-  font-size: 32px;
+  font-size: clamp(24px, 3.2vw, 32px);
   font-weight: 600;
   line-height: 1.15;
   letter-spacing: -0.01em;
@@ -386,6 +420,8 @@ img { display: block; max-width: 100%; }
 @media (max-width: 1199.98px) {
   .cs-band { padding: var(--s-16) 0; }
   .cs-inner { padding: 0 48px; }
+  /* Match the bar padding to the content measure so it never overflows */
+  .cs-nav-inner { padding-left: 48px; padding-right: 48px; }
 }
 
 /* ─── Responsive — mobile (≤809.98px) ────────────────────────── */
@@ -393,9 +429,42 @@ img { display: block; max-width: 100%; }
   .cs-band { padding: var(--s-12) 0; }
   .cs-inner { padding: 0 24px; }
   .cs-nav-inner { padding: 0 24px; }
-  .cs-nav-link { display: none; }
 
-  .cs-heading { font-size: 26px; }
+  /* Reveal the hamburger; links drop into a themed dropdown panel.
+     Descendant selectors (.cs-nav …) outrank any page's base
+     .cs-nav-links rule regardless of stylesheet source order. */
+  .cs-nav-toggle { display: flex; }
+
+  .cs-nav .cs-nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--s-1);
+    padding: var(--s-3) var(--s-4) var(--s-4);
+    background: rgba(14, 14, 16, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--line-dark);
+  }
+
+  .cs-nav.is-open .cs-nav-links { display: flex; }
+
+  .cs-nav .cs-nav-link {
+    display: block;
+    padding: var(--s-3) var(--s-4);
+    border-radius: var(--r-sm);
+    font-size: 17px;
+  }
+
+  .cs-nav .cs-nav-btn {
+    justify-content: center;
+    margin-top: var(--s-2);
+  }
+
   .cs-lead { font-size: 19px; }
 
   .site-footer-inner { flex-direction: column; gap: var(--s-8); padding-top: var(--s-24); padding-bottom: var(--s-12); }
